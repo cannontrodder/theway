@@ -5,11 +5,13 @@ import { notFound } from "next/navigation";
 import { BedIcon } from "@/components/bed-icon";
 import { ImageSlot } from "@/components/image-slot";
 import { StatusChip } from "@/components/status-chip";
-import { stagePath, stageRoute } from "@/components/stage-card";
 import {
   formatDistanceKm,
   formatWeekdayDate,
   placeName,
+  sentence,
+  stagePath,
+  stageRoute,
 } from "@/lib/display";
 import type { StatusLabel } from "@/lib/trip";
 import { findStage, overnightStay, trip } from "@/lib/trip";
@@ -69,7 +71,9 @@ export default async function StagePage({
     <main className="px-md py-lg gap-lg mx-auto flex w-full max-w-3xl flex-1 flex-col">
       <div className="gap-sm flex flex-col">
         <p className="gap-sm text-muted flex items-center text-xs tracking-[0.08em] uppercase">
-          <span>Stage {stage.number} of {summary.walkingDays}</span>
+          <span>
+            Stage {stage.number} of {summary.walkingDays}
+          </span>
           <span>{formatWeekdayDate(stage.weekday, stage.date)}</span>
           <StatusChip
             status={stage.status}
@@ -103,12 +107,12 @@ export default async function StagePage({
           <h2 className="font-display text-lg">Watch out for this one</h2>
           {stage.preWalkTransport ? (
             <p className="text-sm font-semibold">
-              {placeName(stage.preWalkTransport)}
+              {sentence(stage.preWalkTransport)}
             </p>
           ) : null}
           {stage.mainRisk ? (
             <p className="max-w-[60ch] text-sm leading-relaxed">
-              {placeName(stage.mainRisk)}
+              {sentence(stage.mainRisk)}
             </p>
           ) : null}
         </section>
@@ -121,7 +125,7 @@ export default async function StagePage({
         >
           <h2 className="font-display text-lg">The ground underfoot</h2>
           <p className="max-w-[60ch] text-sm leading-relaxed">
-            {placeName(stage.terrainNote)}
+            {sentence(stage.terrainNote)}
           </p>
         </section>
       ) : null}
@@ -132,19 +136,19 @@ export default async function StagePage({
           data-testid="fixed-finish"
           className="border-border rounded-medium px-md py-md gap-sm bg-white flex flex-col border"
         >
-          <h2 className="font-display text-lg">
-            The finish itself is settled
-          </h2>
+          <h2 className="font-display text-lg">The finish itself is settled</h2>
           <p className="gap-sm flex flex-wrap items-center text-sm font-semibold">
             <span>
               {placeName(fixedFinish.location)} on{" "}
-              {formatWeekdayDate(stage.weekday, fixedFinish.date)}
+              {formatWeekdayDate(fixedFinish.weekday, fixedFinish.date)}
             </span>
             <StatusChip status={fixedFinish.status} className="text-muted" />
           </p>
           <p className="max-w-[60ch] text-sm leading-relaxed">
-            The Stage that gets us there is still {stage.status.toLowerCase()}, but
-            walking into {placeName(fixedFinish.location)} that day is not.
+            The Stage that gets us there still reads{" "}
+            <StatusChip status={stage.status} className="text-muted" />, but
+            walking into {placeName(fixedFinish.location)} that day is not up for
+            debate.
           </p>
         </section>
       ) : null}
@@ -157,7 +161,7 @@ export default async function StagePage({
           <h2 className="font-display text-lg">That evening</h2>
           {stage.eveningPlan ? (
             <p className="gap-sm flex flex-wrap items-center text-sm font-semibold">
-              <span>{placeName(stage.eveningPlan)}</span>
+              <span>{sentence(stage.eveningPlan)}</span>
               <StatusChip
                 status={
                   reachesTheFixedFinish
@@ -170,16 +174,13 @@ export default async function StagePage({
           ) : null}
           {stage.planningReason ? (
             <p className="max-w-[60ch] text-sm leading-relaxed">
-              {placeName(stage.planningReason)}
+              {sentence(stage.planningReason)}
             </p>
           ) : null}
         </section>
       ) : null}
 
-      <section
-        aria-label="Waypoints"
-        className="gap-sm flex flex-col"
-      >
+      <section aria-label="Waypoints" className="gap-sm flex flex-col">
         <h2 className="font-display text-lg">Villages along the way</h2>
         <ol className="gap-sm flex flex-col">
           {stage.waypoints.map((waypoint) => (
@@ -195,9 +196,7 @@ export default async function StagePage({
             </li>
           ))}
         </ol>
-        <p className="text-muted text-xs">
-          Passed through, not slept in.
-        </p>
+        <p className="text-muted text-xs">Passed through, not slept in.</p>
       </section>
 
       <section
@@ -215,13 +214,10 @@ export default async function StagePage({
           </span>
           {stay ? <StatusChip status={stay.status} className="text-muted" /> : null}
         </p>
-        {stay?.property ? (
-          <p className="text-sm">{stay.property}</p>
-        ) : (
-          <p className="text-muted text-sm">No property chosen yet.</p>
-        )}
         {stay?.notes ? (
-          <p className="max-w-[60ch] text-sm leading-relaxed">{stay.notes}</p>
+          <p className="max-w-[60ch] text-sm leading-relaxed">
+            {sentence(stay.notes)}
+          </p>
         ) : null}
       </section>
 
@@ -229,9 +225,7 @@ export default async function StagePage({
         aria-label="Orientation maps"
         className="border-border rounded-medium px-md py-md gap-sm bg-white flex flex-col border"
       >
-        <h2 className="font-display text-lg">
-          On the map — orientation only
-        </h2>
+        <h2 className="font-display text-lg">On the map — orientation only</h2>
         <ul className="gap-sm flex flex-col">
           {stage.orientationMaps.map((map) => (
             <li key={map.url}>
@@ -247,7 +241,7 @@ export default async function StagePage({
           ))}
         </ul>
         <p className="max-w-[60ch] text-muted text-xs leading-relaxed">
-          {placeName(summary.orientationMapCaveat)}
+          {sentence(summary.orientationMapCaveat)}
         </p>
       </section>
 

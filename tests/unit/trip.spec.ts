@@ -139,9 +139,11 @@ test("the Burgos finish is FIXED even though the Stage that reaches it is PROPOS
   expect(trip.fixedFinish).toEqual({
     location: "Burgos",
     date: "2026-10-09",
+    weekday: "Friday",
     status: "FIXED",
     eveningPlanStatus: "FIXED",
   });
+  expect(trip.fixedFinish.weekday).toBe(trip.stages[4].weekday);
   expect(trip.stages[4].status).toBe("PROPOSED");
   expect(trip.stages[4].date).toBe(trip.fixedFinish.date);
   expect(trip.stages[4].finishesAt).toBe(trip.fixedFinish.location);

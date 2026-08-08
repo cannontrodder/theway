@@ -132,6 +132,7 @@ export interface OpenItem {
 export interface FixedFinish {
   location: string;
   date: string;
+  weekday: string;
   status: StatusLabel;
   eveningPlanStatus: StatusLabel;
 }
@@ -282,6 +283,14 @@ function rejectUnrecognisedStatuses(value: unknown, path: string) {
   }
 }
 
+function weekdayOf(data: RawTripData, isoDate: string): string {
+  const day = data.daily_itinerary.find((entry) => entry.date === isoDate);
+  if (!day) {
+    throw new Error(`No day in the itinerary falls on ${isoDate}.`);
+  }
+  return day.day;
+}
+
 function humanise(raw: string): string {
   const words = raw.replace(/_/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -365,6 +374,7 @@ export function readTrip(rawData: unknown): Trip {
     fixedFinish: {
       location: camino_finish.location,
       date: camino_finish.date,
+      weekday: weekdayOf(data, camino_finish.date),
       status: toStatusLabel(camino_finish.status),
       eveningPlanStatus: toStatusLabel(friday_night.status),
     },

@@ -9,7 +9,10 @@ import {
   formatWeekdayDate,
   formatWeekdayDateSpan,
   placeName,
+  sentence,
   spellOutCount,
+  stagePath,
+  stageRoute,
 } from "../../src/lib/display";
 import { trip } from "../../src/lib/trip";
 
@@ -71,6 +74,44 @@ test("a weekday span inside one month names the month once", () => {
 test("an approximate distance is rounded and carries a tilde", () => {
   expect(formatApproxDistanceKm(123.2)).toBe("~123 km");
   expect(formatApproxDistanceKm(28.7)).toBe("~29 km");
+});
+
+test("a sentence gets its place names accented without touching English words", () => {
+  expect(sentence("Bus from Bilbao to Logrono")).toBe("Bus from Bilbao to Logroño");
+  expect(
+    sentence("The Montes de Oca section makes this more demanding than a flat 30 km day."),
+  ).toBe("The Montes de Oca section makes this more demanding than a flat 30 km day.");
+});
+
+test("a sentence leaves alone the place names that are also English words", () => {
+  expect(sentence("Ages ago we walked through Granon")).toBe(
+    "Ages ago we walked through Grañón",
+  );
+  expect(sentence("Rio is a long way from Najera")).toBe(
+    "Rio is a long way from Nájera",
+  );
+});
+
+test("every sentence the Stage pages show survives the accenting unchanged in meaning", () => {
+  for (const stage of trip.stages) {
+    for (const prose of [
+      stage.mainRisk,
+      stage.terrainNote,
+      stage.planningReason,
+      stage.eveningPlan,
+      stage.preWalkTransport,
+    ]) {
+      if (!prose) continue;
+      expect(sentence(prose).length).toBe(prose.length);
+    }
+  }
+});
+
+test("a Stage's path and route read from the Stage itself", () => {
+  expect(stagePath(trip.stages[0])).toBe("/day/1/");
+  expect(stagePath(trip.stages[4])).toBe("/day/5/");
+  expect(stageRoute(trip.stages[0])).toBe("Logroño → Nájera");
+  expect(stageRoute(trip.stages[4])).toBe("Atapuerca → Burgos");
 });
 
 test("a stage distance keeps the tenth of a kilometre the data gives", () => {

@@ -1,19 +1,17 @@
 import Link from "next/link";
 
-import { formatDistanceKm, formatWeekdayDate, placeName } from "@/lib/display";
+import {
+  formatDistanceKm,
+  formatWeekdayDate,
+  placeName,
+  stagePath,
+  stageRoute,
+} from "@/lib/display";
 import type { Stage } from "@/lib/trip";
 
 import { BedIcon } from "./bed-icon";
 import { ImageSlot } from "./image-slot";
 import { StatusChip } from "./status-chip";
-
-export function stagePath(stage: Stage): string {
-  return `/day/${stage.number}/`;
-}
-
-export function stageRoute(stage: Stage): string {
-  return `${placeName(stage.startsAt)} → ${placeName(stage.finishesAt)}`;
-}
 
 export function StageCard({ stage }: { stage: Stage }) {
   return (
