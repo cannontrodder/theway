@@ -5,6 +5,9 @@ test("the homepage renders from the static export", async ({ page }) => {
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("The Way");
   await expect(page.getByText("Our Camino. Our Journey.")).toBeVisible();
+  await expect(
+    page.getByText("Logroño to Burgos, 4–11 October 2026."),
+  ).toBeVisible();
 });
 
 test("a trailing-slash URL serves the same page", async ({ page }) => {
