@@ -126,6 +126,11 @@ Real and candid: the trail itself, boots, packs, hands, stone, villages, road si
 
 Stock-library register — staged models, drone tourism sweeps, saturated sunsets, heavy HDR — reads as a different site entirely; keep it out.
 
-## Open gap
+## Homepage mock-up
 
-A high-fidelity homepage mock-up (desktop and mobile) would pin the visual system down far tighter than this prose does. There is also a moodboard image referenced in the original planning conversation that is **not yet in this repo** — if it lands here, treat it as visual direction for palette, editorial type, map emphasis and photographic register only, and disregard any branding on it beyond the `THE WAY` wordmark.
+`reference-material/homepage-mockup.png` shows the intended homepage at desktop and mobile width. It is the tightest available statement of the visual system — where this prose and the mock-up disagree on layout, spacing, or component shape, follow the mock-up.
+
+Two details in it depart from the text above and are the mock-up's call:
+
+- The wordmark carries the strapline **_Our Camino. Our Journey._** and pairs with a **scallop-shell mark** rather than an abstract fan.
+- The route map distinguishes all five days by **colour** (olive, blue, ochre, amber, navy) with a legend, rather than by line treatment alone.
