@@ -29,7 +29,7 @@ Every fact on the site carries its **Status** — how settled that fact is. A St
 Two values in the data are not Statuses and never surface as one:
 
 - `proposed_with_fixed_finish` — Day 5. It reads as PROPOSED; the fixed Burgos finish is stated in the text.
-- `superseded` — the earlier stage plan. Superseded facts are not shown at all.
+- `superseded` — the earlier stage plan, kept in the data for reference. Superseded facts are not shown at all.
 
 ## Stages
 
