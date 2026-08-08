@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import {
   formatApproxDistanceKm,
   formatDateSpan,
+  formatDistanceKm,
   formatLongDateSpan,
   formatMonthAndYear,
   formatWeekdayDate,
@@ -17,6 +18,16 @@ test("place names get their Spanish diacritics back for display", () => {
   expect(placeName("Najera")).toBe("Nájera");
   expect(placeName("Camino Frances")).toBe("Camino Francés");
   expect(placeName("Ages")).toBe("Agés");
+  expect(placeName("Ciruena")).toBe("Cirueña");
+  expect(placeName("Granon")).toBe("Grañón");
+  expect(placeName("Villamayor del Rio")).toBe("Villamayor del Río");
+  expect(placeName("Cardenuela Riopico")).toBe("Cardeñuela Riopico");
+  expect(placeName("Villafria")).toBe("Villafría");
+});
+
+test("a place name that only looks accented is left as it is", () => {
+  expect(placeName("Viloria de Rioja")).toBe("Viloria de Rioja");
+  expect(placeName("Orbaneja Riopico")).toBe("Orbaneja Riopico");
 });
 
 test("place names without diacritics pass through untouched", () => {
@@ -60,6 +71,12 @@ test("a weekday span inside one month names the month once", () => {
 test("an approximate distance is rounded and carries a tilde", () => {
   expect(formatApproxDistanceKm(123.2)).toBe("~123 km");
   expect(formatApproxDistanceKm(28.7)).toBe("~29 km");
+});
+
+test("a stage distance keeps the tenth of a kilometre the data gives", () => {
+  expect(formatDistanceKm(28.7)).toBe("28.7 km");
+  expect(formatDistanceKm(20.2)).toBe("20.2 km");
+  expect(formatDistanceKm(30)).toBe("30 km");
 });
 
 test("a month and year read out in full", () => {

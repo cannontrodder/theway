@@ -56,7 +56,9 @@ test("the hero image slot is a flat colour block carrying the Route line, with n
 }) => {
   await page.goto("/");
 
-  const slot = page.getByTestId("image-slot");
+  const slot = page
+    .getByRole("region", { name: "The Way" })
+    .getByTestId("image-slot");
   await expect(slot).toBeVisible();
   await expect(slot.getByTestId("route-line")).toBeVisible();
 

@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import { Wordmark } from "./wordmark";
 
-const navLinks = [{ href: "/", label: "Overview" }];
+const navLinks = [
+  { href: "/", label: "Overview" },
+  { href: "/day/1/", label: "Days" },
+];
 
 export function SiteHeader({ dates }: { dates: string }) {
   return (

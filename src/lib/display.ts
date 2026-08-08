@@ -33,6 +33,11 @@ const ACCENTED_WORDS: Record<string, string> = {
   Najera: "Nájera",
   Frances: "Francés",
   Ages: "Agés",
+  Ciruena: "Cirueña",
+  Granon: "Grañón",
+  Rio: "Río",
+  Cardenuela: "Cardeñuela",
+  Villafria: "Villafría",
 };
 
 const NUMBER_WORDS = [
@@ -121,6 +126,10 @@ export function formatWeekdayDateSpan(
     return `${shortWeekday(start.weekday)} ${startDate.day} ${EN_DASH} ${endLabel}`;
   }
   return `${formatWeekdayDate(start.weekday, start.date)} ${EN_DASH} ${endLabel}`;
+}
+
+export function formatDistanceKm(distanceKm: number): string {
+  return `${distanceKm} km`;
 }
 
 export function formatApproxDistanceKm(distanceKm: number): string {
