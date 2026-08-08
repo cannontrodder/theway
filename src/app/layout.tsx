@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   description: "Our Camino. Our Journey. Logroño to Burgos, October 2026.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
