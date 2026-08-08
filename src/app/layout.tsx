@@ -3,6 +3,8 @@ import { Inter, Playfair_Display } from "next/font/google";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { formatLongDateSpan } from "@/lib/display";
+import { trip } from "@/lib/trip";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,7 +36,9 @@ export default function RootLayout({
       className={`${inter.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SiteHeader dates="4–11 October 2026" />
+        <SiteHeader
+          dates={formatLongDateSpan(trip.summary.startDate, trip.summary.endDate)}
+        />
         {children}
         <SiteFooter />
       </body>

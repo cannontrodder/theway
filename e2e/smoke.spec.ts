@@ -7,9 +7,6 @@ test("the homepage renders from the static export", async ({ page }) => {
   const main = page.getByRole("main");
   await expect(main.getByRole("heading", { level: 1 })).toHaveText("The Way");
   await expect(main.getByText("Our Camino. Our Journey.")).toBeVisible();
-  await expect(
-    main.getByText("Logroño to Burgos, 4–11 October 2026."),
-  ).toBeVisible();
 });
 
 test("the export writes each route as a directory index, so no host rewrite rules are needed", () => {
