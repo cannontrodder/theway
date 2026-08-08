@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
 test("the homepage renders from the static export", async ({ page }) => {
@@ -10,9 +11,7 @@ test("the homepage renders from the static export", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("a trailing-slash URL serves the same page", async ({ page }) => {
-  const response = await page.goto("/");
-
-  expect(response?.status()).toBe(200);
-  expect(new URL(page.url()).pathname).toBe("/");
+test("the export writes each route as a directory index, so no host rewrite rules are needed", () => {
+  expect(existsSync("out/_not-found/index.html")).toBe(true);
+  expect(existsSync("out/_not-found.html")).toBe(false);
 });

@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "The Way",
-  description: "Our Camino. Our Journey. Logroño to Burgos, October 2026.",
+  description:
+    "Our Camino. Our Journey. Logroño to Burgos, 4–11 October 2026.",
 };
 
 export default function RootLayout({

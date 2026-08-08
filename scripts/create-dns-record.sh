@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# Creates the CNAME that points the custom domain at GitHub Pages.
-#
-# Add the custom domain in the repo's Pages settings BEFORE running this.
-# Creating the DNS record first opens a subdomain-takeover window: the name
-# resolves to Pages while no repository has claimed it.
 set -euo pipefail
 
-AWS_PROFILE="${AWS_PROFILE:-pep-bot}"
+export AWS_PROFILE=pep-bot
 HOSTED_ZONE_NAME="cannontrodder.net."
 RECORD_NAME="theway.cannontrodder.net"
 RECORD_VALUE="cannontrodder.github.io"
 
-export AWS_PROFILE
+if ! gh api "repos/cannontrodder/theway/pages" --jq '.cname' 2>/dev/null | grep -qx "$RECORD_NAME"; then
+  echo "Pages is not yet serving ${RECORD_NAME}. Run configure-pages.sh first:" >&2
+  echo "creating this record before Pages claims the domain opens a subdomain-takeover window." >&2
+  exit 1
+fi
 
 zone_id=$(aws route53 list-hosted-zones \
   --query "HostedZones[?Name=='${HOSTED_ZONE_NAME}'].Id | [0]" \
