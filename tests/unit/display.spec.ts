@@ -2,7 +2,12 @@ import { expect, test } from "@playwright/test";
 
 import {
   formatApproxDistanceKm,
+  formatApproxTimeSpan,
   formatDateSpan,
+  formatDayAndMonth,
+  formatDayAndMonthSpan,
+  formatLongWeekdayDate,
+  formatRoute,
   formatDistanceKm,
   formatLongDateSpan,
   formatMonthAndYear,
@@ -118,6 +123,38 @@ test("a stage distance keeps the tenth of a kilometre the data gives", () => {
   expect(formatDistanceKm(28.7)).toBe("28.7 km");
   expect(formatDistanceKm(20.2)).toBe("20.2 km");
   expect(formatDistanceKm(30)).toBe("30 km");
+});
+
+test("an itinerary Day heading names the weekday and month in full", () => {
+  expect(formatLongWeekdayDate("Sunday", "2026-10-04")).toBe("Sunday 4 October");
+  expect(formatLongWeekdayDate("Wednesday", "2026-10-07")).toBe(
+    "Wednesday 7 October",
+  );
+});
+
+test("a bare day and month drops the weekday for the journey chain", () => {
+  expect(formatDayAndMonth("2026-10-04")).toBe("4 Oct");
+  expect(formatDayAndMonth("2026-10-11")).toBe("11 Oct");
+});
+
+test("a day and month span inside one month names the month once", () => {
+  expect(formatDayAndMonthSpan("2026-10-05", "2026-10-09")).toBe("5–9 Oct");
+  expect(formatDayAndMonthSpan("2026-09-28", "2026-10-04")).toBe("28 Sep – 4 Oct");
+});
+
+test("an event route becomes accented place names joined by arrows", () => {
+  expect(formatRoute("NCL -> AMS -> BIO")).toBe("NCL → AMS → BIO");
+  expect(formatRoute("Bilbao -> Logrono")).toBe("Bilbao → Logroño");
+  expect(formatRoute("Najera -> Santo Domingo de la Calzada")).toBe(
+    "Nájera → Santo Domingo de la Calzada",
+  );
+});
+
+test("approximate times read as a span, or as the one time the data holds", () => {
+  expect(formatApproxTimeSpan("05:45", "11:15")).toBe("05:45–11:15 approx");
+  expect(formatApproxTimeSpan("17:15", undefined)).toBe("17:15 approx");
+  expect(formatApproxTimeSpan(undefined, "22:55")).toBe("22:55 approx");
+  expect(formatApproxTimeSpan(undefined, undefined)).toBeUndefined();
 });
 
 test("a month and year read out in full", () => {
