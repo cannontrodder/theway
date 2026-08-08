@@ -13,9 +13,9 @@ The site should read like a **field guide** — a tactile, printed walking compa
 
 Tone is personal, understated, outdoorsy and warm, with a dry Northern practicality. Write as a competent walker talking to a friend.
 
-Two motifs carry the identity: the **route line** and a **simplified radiating fan**. Keep Camino references at that level of abstraction — implicit, not literal.
+Two motifs carry the identity: the **route line** and the **shell mark** — a stylised scallop shell, as drawn in the mock-up.
 
-**Guardrails.** These read as the wrong project, so keep them out: generic Camino tourism branding, religious imagery, literal scallop shells, parchment textures, script fonts, bright holiday colours, and card-grid dashboard layouts.
+**Guardrails.** These read as the wrong project, so keep them out: generic Camino tourism branding, religious imagery, parchment textures, script fonts, bright holiday colours, and card-grid dashboard layouts.
 
 ## Design tokens
 
@@ -45,16 +45,16 @@ Two motifs carry the identity: the **route line** and a **simplified radiating f
 
 ## Logo
 
-**Wordmark:** `THE WAY` in uppercase, wide tracking, `ink`, set in the display face or a strong transitional serif. The wordmark stands alone — no slogan, no tagline, no badge.
+**Wordmark:** `THE WAY` in uppercase, wide tracking, `ink`, set in the display face or a strong transitional serif. It carries the strapline **_Our Camino. Our Journey._** beneath it, and pairs with the shell mark to its left. No badge.
 
-**Secondary mark:** an abstract fan of 7–9 radiating lines, flat, single-colour, legible at 16px favicon size.
+**Shell mark:** a stylised scallop shell, flat, single-colour `ochre`, legible at 16px favicon size. Sits to the left of the wordmark in the header and footer.
 
 ## Map
 
 The map is the centrepiece, not decoration.
 
 - **Base:** pale, muted, low-contrast, so the route dominates.
-- **Route:** the Camino line in `ink` or `ochre`. Distinguish walking days by line treatment — weight, dash, opacity — within that two-colour range.
+- **Route:** one colour per walking day, per the mock-up legend — olive, blue, ochre, amber, navy. Until there is a real Camino track, the line is indicative: see ADR-0001.
 - **Markers:** solid circle for stage start/end; bed for overnight; fork for food; droplet for water; bus or plane for transport; outlined pin for other points of interest.
 - **Labels:** only significant towns at default zoom.
 - **Interaction:** an overall route view that fits bounds automatically, a filter by walking day, and tap-a-stage-to-open-detail. Ship the minimum control set — zoom and recentre.
@@ -66,10 +66,15 @@ The map is the centrepiece, not decoration.
 /itinerary       Full 4–11 October timeline
 /map             Full route map
 /day/1 … /day/5  Individual walking stages
-/bilbao          City page
-/burgos          City page
 /travel          Flights and buses
 /stays           Accommodation
+```
+
+These come later, once there is content to put on them. `trip-data.json` currently holds nothing to fill them with — only a list of research still owed. Don't ship an empty page, and don't link to one from the nav.
+
+```
+/bilbao          City page
+/burgos          City page
 /packing         Packing and kit
 /info            Emergency contacts, documents, useful numbers
 ```
@@ -80,6 +85,8 @@ Top to bottom:
 
 1. **Header** — `THE WAY`, and the trip dates.
 2. **Hero** — a full-width landscape or route-map visual, carrying the three headline figures: the Logroño→Burgos span, the day count, and total distance.
+
+   The hero sentence is **"From Logroño to Burgos over five days in October 2026. Two mates from County Durham walking west."** No names anywhere on the site — the mock-up's "Mates from Durham" is the same idea, less precisely put.
 3. **Trip timeline** — the full door-to-door chain: Newcastle, Amsterdam, Bilbao, Logroño, the walking days, Burgos, Bilbao, Amsterdam, Newcastle.
 4. **Walking day cards** — one per stage (see below).
 5. **Route map** — large and interactive.
@@ -106,13 +113,9 @@ Each walking day card carries these fields, with links out to the route, the sta
 
 ## Status states
 
-Every fact that isn't settled carries its real state, from this exact set:
+Every fact carries its Status. The set and its display labels are defined in `CONTEXT.md` — the values come from `trip-data.json`, not from this brief.
 
-```
-FIXED  BOOKED  PROPOSED  TO BOOK  TO VERIFY  APPROXIMATE
-```
-
-Show the state wherever the fact appears, so a provisional detail always reads as provisional.
+Show the Status wherever the fact appears, so a provisional detail always reads as provisional.
 
 ## Glanceable UI
 
@@ -126,11 +129,14 @@ Real and candid: the trail itself, boots, packs, hands, stone, villages, road si
 
 Stock-library register — staged models, drone tourism sweeps, saturated sunsets, heavy HDR — reads as a different site entirely; keep it out.
 
+**Until we have walked it, we have no photographs.** So every image slot ships empty in v1: a flat colour block in `paper` or `olive`, carrying the Route line motif. No stock stand-ins, not even temporarily — a placeholder that looks finished never gets replaced. The photographs in the mock-up show the intended register, not shippable assets.
+
 ## Homepage mock-up
 
 `reference-material/homepage-mockup.png` shows the intended homepage at desktop and mobile width. It is the tightest available statement of the visual system — where this prose and the mock-up disagree on layout, spacing, or component shape, follow the mock-up.
 
-Two details in it depart from the text above and are the mock-up's call:
+One detail in it departs from the text above and is the mock-up's call:
 
-- The wordmark carries the strapline **_Our Camino. Our Journey._** and pairs with a **scallop-shell mark** rather than an abstract fan.
 - The route map distinguishes all five days by **colour** (olive, blue, ochre, amber, navy) with a legend, rather than by line treatment alone.
+
+The wordmark carries the strapline **_Our Camino. Our Journey._**
