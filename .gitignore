@@ -44,4 +44,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 
+# copied from maplibre-gl at build time by scripts/copy-map-worker.mjs
+/public/maplibre/
+
 .psst-session

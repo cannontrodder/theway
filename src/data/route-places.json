@@ -1,0 +1,101 @@
+{
+  "source": "Place centroids geocoded from OpenStreetMap via Nominatim. Longitude then latitude, four decimal places, which is village-centre accuracy. Not a Camino track: see docs/adr/0001-indicative-route-until-gpx.md.",
+  "places": {
+    "Logrono": [
+      -2.4397,
+      42.4661
+    ],
+    "Navarrete": [
+      -2.5616,
+      42.429
+    ],
+    "Ventosa": [
+      -2.6263,
+      42.4042
+    ],
+    "Najera": [
+      -2.7337,
+      42.4167
+    ],
+    "Azofra": [
+      -2.8014,
+      42.4235
+    ],
+    "Ciruena": [
+      -2.8955,
+      42.4118
+    ],
+    "Santo Domingo de la Calzada": [
+      -2.9536,
+      42.4407
+    ],
+    "Granon": [
+      -3.0273,
+      42.4502
+    ],
+    "Redecilla del Camino": [
+      -3.0652,
+      42.438
+    ],
+    "Castildelgado": [
+      -3.0849,
+      42.4373
+    ],
+    "Viloria de Rioja": [
+      -3.1004,
+      42.4265
+    ],
+    "Villamayor del Rio": [
+      -3.1369,
+      42.4276
+    ],
+    "Belorado": [
+      -3.1965,
+      42.4267
+    ],
+    "Tosantos": [
+      -3.2424,
+      42.4141
+    ],
+    "Villambistia": [
+      -3.2618,
+      42.4052
+    ],
+    "Espinosa del Camino": [
+      -3.2797,
+      42.4056
+    ],
+    "Villafranca Montes de Oca": [
+      -3.3086,
+      42.3884
+    ],
+    "San Juan de Ortega": [
+      -3.4362,
+      42.3753
+    ],
+    "Ages": [
+      -3.4792,
+      42.3699
+    ],
+    "Atapuerca": [
+      -3.5074,
+      42.3768
+    ],
+    "Cardenuela Riopico": [
+      -3.56,
+      42.3594
+    ],
+    "Orbaneja Riopico": [
+      -3.5849,
+      42.3601
+    ],
+    "Villafria": [
+      -3.6165,
+      42.3656
+    ],
+    "Burgos": [
+      -3.6812,
+      42.3448
+    ]
+  }
+}

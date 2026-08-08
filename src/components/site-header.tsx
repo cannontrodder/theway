@@ -8,6 +8,7 @@ import { Wordmark } from "./wordmark";
 const navLinks = [
   { href: "/", label: "Overview" },
   { href: stagePath(trip.stages[0]), label: "Stages" },
+  { href: "/map/", label: "Map" },
 ];
 
 export function SiteHeader({ dates }: { dates: string }) {

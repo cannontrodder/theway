@@ -222,6 +222,26 @@ export default async function StagePage({
       </section>
 
       <section
+        aria-label="This Stage on the route map"
+        className="border-border rounded-medium px-md py-md gap-sm bg-white flex flex-col border"
+      >
+        <h2 className="font-display text-lg">See it on the route map</h2>
+        <p>
+          <Link
+            href={`/map/#stage-${stage.number}`}
+            data-testid="route-map-link"
+            className="py-sm text-sm font-semibold underline"
+          >
+            {stageRoute(stage)} on the route map
+          </Link>
+        </p>
+        <p className="max-w-[60ch] text-muted text-xs leading-relaxed">
+          The whole walk, one colour per day. The line is indicative, not a
+          surveyed track.
+        </p>
+      </section>
+
+      <section
         aria-label="Orientation maps"
         className="border-border rounded-medium px-md py-md gap-sm bg-white flex flex-col border"
       >
