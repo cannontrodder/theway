@@ -3,12 +3,16 @@ import { expect, test } from "@playwright/test";
 import {
   formatApproxDistanceKm,
   formatDateSpan,
+  formatDistanceKm,
   formatLongDateSpan,
   formatMonthAndYear,
   formatWeekdayDate,
   formatWeekdayDateSpan,
   placeName,
+  sentence,
   spellOutCount,
+  stagePath,
+  stageRoute,
 } from "../../src/lib/display";
 import { trip } from "../../src/lib/trip";
 
@@ -17,6 +21,16 @@ test("place names get their Spanish diacritics back for display", () => {
   expect(placeName("Najera")).toBe("Nájera");
   expect(placeName("Camino Frances")).toBe("Camino Francés");
   expect(placeName("Ages")).toBe("Agés");
+  expect(placeName("Ciruena")).toBe("Cirueña");
+  expect(placeName("Granon")).toBe("Grañón");
+  expect(placeName("Villamayor del Rio")).toBe("Villamayor del Río");
+  expect(placeName("Cardenuela Riopico")).toBe("Cardeñuela Riopico");
+  expect(placeName("Villafria")).toBe("Villafría");
+});
+
+test("a place name that only looks accented is left as it is", () => {
+  expect(placeName("Viloria de Rioja")).toBe("Viloria de Rioja");
+  expect(placeName("Orbaneja Riopico")).toBe("Orbaneja Riopico");
 });
 
 test("place names without diacritics pass through untouched", () => {
@@ -60,6 +74,50 @@ test("a weekday span inside one month names the month once", () => {
 test("an approximate distance is rounded and carries a tilde", () => {
   expect(formatApproxDistanceKm(123.2)).toBe("~123 km");
   expect(formatApproxDistanceKm(28.7)).toBe("~29 km");
+});
+
+test("a sentence gets its place names accented without touching English words", () => {
+  expect(sentence("Bus from Bilbao to Logrono")).toBe("Bus from Bilbao to Logroño");
+  expect(
+    sentence("The Montes de Oca section makes this more demanding than a flat 30 km day."),
+  ).toBe("The Montes de Oca section makes this more demanding than a flat 30 km day.");
+});
+
+test("a sentence leaves alone the place names that are also English words", () => {
+  expect(sentence("Ages ago we walked through Granon")).toBe(
+    "Ages ago we walked through Grañón",
+  );
+  expect(sentence("Rio is a long way from Najera")).toBe(
+    "Rio is a long way from Nájera",
+  );
+});
+
+test("every sentence the Stage pages show survives the accenting unchanged in meaning", () => {
+  for (const stage of trip.stages) {
+    for (const prose of [
+      stage.mainRisk,
+      stage.terrainNote,
+      stage.planningReason,
+      stage.eveningPlan,
+      stage.preWalkTransport,
+    ]) {
+      if (!prose) continue;
+      expect(sentence(prose).length).toBe(prose.length);
+    }
+  }
+});
+
+test("a Stage's path and route read from the Stage itself", () => {
+  expect(stagePath(trip.stages[0])).toBe("/day/1/");
+  expect(stagePath(trip.stages[4])).toBe("/day/5/");
+  expect(stageRoute(trip.stages[0])).toBe("Logroño → Nájera");
+  expect(stageRoute(trip.stages[4])).toBe("Atapuerca → Burgos");
+});
+
+test("a stage distance keeps the tenth of a kilometre the data gives", () => {
+  expect(formatDistanceKm(28.7)).toBe("28.7 km");
+  expect(formatDistanceKm(20.2)).toBe("20.2 km");
+  expect(formatDistanceKm(30)).toBe("30 km");
 });
 
 test("a month and year read out in full", () => {

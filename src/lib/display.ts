@@ -32,7 +32,15 @@ const ACCENTED_WORDS: Record<string, string> = {
   Logrono: "Logroño",
   Najera: "Nájera",
   Frances: "Francés",
+  Ciruena: "Cirueña",
+  Granon: "Grañón",
+  Cardenuela: "Cardeñuela",
+  Villafria: "Villafría",
+};
+
+const ACCENTED_WORDS_THAT_ARE_ALSO_ENGLISH: Record<string, string> = {
   Ages: "Agés",
+  Rio: "Río",
 };
 
 const NUMBER_WORDS = [
@@ -70,8 +78,15 @@ function parseIsoDate(isoDate: string): CalendarDate {
 export function placeName(raw: string): string {
   return raw.replace(
     /[A-Za-z]+/g,
-    (word) => ACCENTED_WORDS[word] ?? word,
+    (word) =>
+      ACCENTED_WORDS[word] ??
+      ACCENTED_WORDS_THAT_ARE_ALSO_ENGLISH[word] ??
+      word,
   );
+}
+
+export function sentence(raw: string): string {
+  return raw.replace(/[A-Za-z]+/g, (word) => ACCENTED_WORDS[word] ?? word);
 }
 
 function formatSpan(
@@ -123,6 +138,10 @@ export function formatWeekdayDateSpan(
   return `${formatWeekdayDate(start.weekday, start.date)} ${EN_DASH} ${endLabel}`;
 }
 
+export function formatDistanceKm(distanceKm: number): string {
+  return `${distanceKm} km`;
+}
+
 export function formatApproxDistanceKm(distanceKm: number): string {
   return `~${Math.round(distanceKm)} km`;
 }
@@ -130,6 +149,14 @@ export function formatApproxDistanceKm(distanceKm: number): string {
 export function formatMonthAndYear(isoDate: string): string {
   const { monthIndex, year } = parseIsoDate(isoDate);
   return `${LONG_MONTHS[monthIndex]} ${year}`;
+}
+
+export function stagePath(stage: { number: number }): string {
+  return `/day/${stage.number}/`;
+}
+
+export function stageRoute(stage: { startsAt: string; finishesAt: string }): string {
+  return `${placeName(stage.startsAt)} → ${placeName(stage.finishesAt)}`;
 }
 
 export function spellOutCount(count: number): string {

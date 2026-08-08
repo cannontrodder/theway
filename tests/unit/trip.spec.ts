@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-import { readTrip, trip } from "../../src/lib/trip";
+import { findStage, overnightStay, readTrip, trip } from "../../src/lib/trip";
 
 const rawFile = JSON.parse(
   readFileSync("src/data/trip-data.json", "utf8"),
@@ -41,6 +41,7 @@ test("the trip is built from the trip-data.json that lives in the app", () => {
 test("the public interface exposes the summary, Stages, itinerary, accommodation, transport and open items", () => {
   expect(Object.keys(trip).sort()).toEqual([
     "accommodation",
+    "fixedFinish",
     "itinerary",
     "openItems",
     "stages",
@@ -132,6 +133,20 @@ test("proposed_with_fixed_finish is not a Status and yields PROPOSED", () => {
     .find((day) => day.date === "2026-10-09")!
     .events.find((event) => event.kind === "Walk")!;
   expect(fridayWalk.status).toBe("PROPOSED");
+});
+
+test("the Burgos finish is FIXED even though the Stage that reaches it is PROPOSED", () => {
+  expect(trip.fixedFinish).toEqual({
+    location: "Burgos",
+    date: "2026-10-09",
+    weekday: "Friday",
+    status: "FIXED",
+    eveningPlanStatus: "FIXED",
+  });
+  expect(trip.fixedFinish.weekday).toBe(trip.stages[4].weekday);
+  expect(trip.stages[4].status).toBe("PROPOSED");
+  expect(trip.stages[4].date).toBe(trip.fixedFinish.date);
+  expect(trip.stages[4].finishesAt).toBe(trip.fixedFinish.location);
 });
 
 test("superseded records are absent from every output", () => {
@@ -226,6 +241,24 @@ test("a Waypoint is never the Stage's own start or Overnight", () => {
     expect(stage.waypoints).not.toContain(stage.finishesAt);
     expect(stage.waypoints).not.toContain(stage.overnight);
   }
+});
+
+test("a Stage is found by its number, and an unknown number finds nothing", () => {
+  expect(findStage(1)!.startsAt).toBe("Logrono");
+  expect(findStage(5)!.finishesAt).toBe("Burgos");
+  expect(findStage(0)).toBeUndefined();
+  expect(findStage(6)).toBeUndefined();
+});
+
+test("every Stage's Overnight resolves to the accommodation booked for that night", () => {
+  for (const stage of trip.stages) {
+    const stay = overnightStay(stage)!;
+    expect(stay.location).toBe(stage.overnight);
+    expect(stay.date).toBe(stage.date);
+  }
+  expect(overnightStay(trip.stages[0])!.status).toBe("PROPOSED");
+  expect(overnightStay(trip.stages[4])!.status).toBe("TO BOOK");
+  expect(overnightStay(trip.stages[4])!.notes).toContain("Fixed overnight location");
 });
 
 test("Stage distances sum to the total stated in the data", () => {

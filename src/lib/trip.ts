@@ -129,8 +129,17 @@ export interface OpenItem {
   reason?: string;
 }
 
+export interface FixedFinish {
+  location: string;
+  date: string;
+  weekday: string;
+  status: StatusLabel;
+  eveningPlanStatus: StatusLabel;
+}
+
 export interface Trip {
   summary: TripSummary;
+  fixedFinish: FixedFinish;
   stages: Stage[];
   itinerary: ItineraryDay[];
   accommodation: Accommodation[];
@@ -191,6 +200,10 @@ interface RawBus {
 }
 
 interface RawTripData {
+  fixed_requirements: {
+    camino_finish: { location: string; date: string; status: string };
+    friday_night: { status: string };
+  };
   trip: {
     name: string;
     camino_route: string;
@@ -270,6 +283,14 @@ function rejectUnrecognisedStatuses(value: unknown, path: string) {
   }
 }
 
+function weekdayOf(data: RawTripData, isoDate: string): string {
+  const day = data.daily_itinerary.find((entry) => entry.date === isoDate);
+  if (!day) {
+    throw new Error(`No day in the itinerary falls on ${isoDate}.`);
+  }
+  return day.day;
+}
+
 function humanise(raw: string): string {
   const words = raw.replace(/_/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -347,8 +368,16 @@ export function readTrip(rawData: unknown): Trip {
   const data = rawData as RawTripData;
   const { trip, walking_plan, navigation } = data;
   const caveat = navigation.google_maps_warning;
+  const { camino_finish, friday_night } = data.fixed_requirements;
 
   return {
+    fixedFinish: {
+      location: camino_finish.location,
+      date: camino_finish.date,
+      weekday: weekdayOf(data, camino_finish.date),
+      status: toStatusLabel(camino_finish.status),
+      eveningPlanStatus: toStatusLabel(friday_night.status),
+    },
     summary: {
       name: trip.name,
       route: trip.camino_route,
@@ -430,3 +459,13 @@ export function readTrip(rawData: unknown): Trip {
 }
 
 export const trip: Trip = readTrip(tripDataFile);
+
+export function findStage(stageNumber: number): Stage | undefined {
+  return trip.stages.find((stage) => stage.number === stageNumber);
+}
+
+export function overnightStay(stage: Stage): Accommodation | undefined {
+  return trip.accommodation.find(
+    (night) => night.date === stage.date && night.location === stage.overnight,
+  );
+}

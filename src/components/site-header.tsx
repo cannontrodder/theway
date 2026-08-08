@@ -1,8 +1,14 @@
 import Link from "next/link";
 
+import { stagePath } from "@/lib/display";
+import { trip } from "@/lib/trip";
+
 import { Wordmark } from "./wordmark";
 
-const navLinks = [{ href: "/", label: "Overview" }];
+const navLinks = [
+  { href: "/", label: "Overview" },
+  { href: stagePath(trip.stages[0]), label: "Stages" },
+];
 
 export function SiteHeader({ dates }: { dates: string }) {
   return (
