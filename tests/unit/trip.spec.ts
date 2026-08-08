@@ -1,25 +1,41 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-import { readTrip, trip, type RawTripData } from "../../src/lib/trip";
+import { readTrip, trip } from "../../src/lib/trip";
 
 const rawFile = JSON.parse(
-  readFileSync("reference-material/trip-data.json", "utf8"),
-) as RawTripData & Record<string, unknown>;
+  readFileSync("src/data/trip-data.json", "utf8"),
+) as Record<string, never>;
 
-function withRawStatus(status: string) {
-  const clone = JSON.parse(JSON.stringify(rawFile)) as RawTripData;
-  clone.open_items[0].status = status;
+function rawFileWith(mutate: (clone: Record<string, never>) => void) {
+  const clone = JSON.parse(JSON.stringify(rawFile)) as Record<string, never>;
+  mutate(clone);
   return clone;
 }
 
-test("the trip is built from reference-material/trip-data.json at build time", () => {
+function rawFileWithOpenItemStatus(status: string) {
+  return rawFileWith((clone) => {
+    (clone.open_items as unknown as { status: string }[])[0].status = status;
+  });
+}
+
+const rawTrip = rawFile.trip as unknown as Record<string, string | number>;
+const rawStages = rawFile.walking_plan as unknown as {
+  stages: { day_number: number; status: string; google_maps_role: string }[];
+};
+const rawNavigation = rawFile.navigation as unknown as {
+  primary_policy: string;
+  google_maps_warning: string;
+};
+
+test("the trip is built from the trip-data.json that lives in the app", () => {
   expect(trip).toEqual(readTrip(rawFile));
-  expect(trip.summary.startsAt).toBe(rawFile.trip.walking_start);
-  expect(trip.summary.finishesAt).toBe(rawFile.trip.walking_finish);
-  expect(trip.summary.startDate).toBe(rawFile.trip.start_date);
-  expect(trip.summary.endDate).toBe(rawFile.trip.end_date);
-  expect(trip.summary.durationDays).toBe(rawFile.trip.duration_days);
+  expect(trip.summary.startsAt).toBe(rawTrip.walking_start);
+  expect(trip.summary.finishesAt).toBe(rawTrip.walking_finish);
+  expect(trip.summary.startDate).toBe(rawTrip.start_date);
+  expect(trip.summary.endDate).toBe(rawTrip.end_date);
+  expect(trip.summary.durationDays).toBe(rawTrip.duration_days);
+  expect(trip.summary.walkingDays).toBe(5);
 });
 
 test("the public interface exposes the summary, Stages, itinerary, accommodation, transport and open items", () => {
@@ -32,10 +48,10 @@ test("the public interface exposes the summary, Stages, itinerary, accommodation
     "transport",
   ]);
   expect(trip.stages).toHaveLength(5);
-  expect(trip.itinerary).toHaveLength(rawFile.trip.duration_days);
+  expect(trip.itinerary).toHaveLength(8);
   expect(trip.accommodation).toHaveLength(7);
-  expect(trip.transport.length).toBeGreaterThanOrEqual(4);
-  expect(trip.openItems.length).toBeGreaterThan(0);
+  expect(trip.transport).toHaveLength(4);
+  expect(trip.openItems).toHaveLength(19);
 });
 
 test("every returned fact carries a display-ready Status label, never a raw key or lowercase status", () => {
@@ -71,6 +87,7 @@ test("every returned fact carries a display-ready Status label, never a raw key 
     "difficulty_planning",
     "google_maps_url",
     "google_maps_role",
+    "operator_likely",
     "accommodation_requirements",
     "planned_not_booked",
     "to_book",
@@ -98,14 +115,12 @@ test("the nine Statuses map to the uppercase labels in CONTEXT.md", () => {
   ];
 
   for (const [raw, label] of expected) {
-    expect(readTrip(withRawStatus(raw)).openItems[0].status).toBe(label);
+    expect(readTrip(rawFileWithOpenItemStatus(raw)).openItems[0].status).toBe(label);
   }
 });
 
 test("proposed_with_fixed_finish is not a Status and yields PROPOSED", () => {
-  const dayFive = rawFile.walking_plan.stages.find(
-    (stage) => stage.day_number === 5,
-  )!;
+  const dayFive = rawStages.stages.find((stage) => stage.day_number === 5)!;
   expect(dayFive.status).toBe("proposed_with_fixed_finish");
 
   const stageFive = trip.stages[4];
@@ -120,8 +135,8 @@ test("proposed_with_fixed_finish is not a Status and yields PROPOSED", () => {
 });
 
 test("superseded records are absent from every output", () => {
-  expect(rawFile.original_plan).toBeDefined();
-  expect((rawFile.original_plan as { status: string }).status).toBe("superseded");
+  const superseded = rawFile.original_plan as unknown as { status: string };
+  expect(superseded.status).toBe("superseded");
 
   const serialised = JSON.stringify(trip);
   expect(serialised).not.toContain("superseded");
@@ -132,13 +147,27 @@ test("superseded records are absent from every output", () => {
 });
 
 test("an unrecognised status value fails the build", () => {
-  expect(() => readTrip(withRawStatus("probably_fine"))).toThrow(
+  expect(() => readTrip(rawFileWithOpenItemStatus("probably_fine"))).toThrow(
     /Unrecognised status "probably_fine"/,
   );
-  expect(() => readTrip(withRawStatus("FIXED"))).toThrow(/Unrecognised status/);
-  expect(() => readTrip(withRawStatus("superseded"))).toThrow(
+  expect(() => readTrip(rawFileWithOpenItemStatus("FIXED"))).toThrow(
     /Unrecognised status/,
   );
+  expect(() => readTrip(rawFileWithOpenItemStatus("superseded"))).toThrow(
+    /Unrecognised status/,
+  );
+});
+
+test("an unrecognised status fails the build even where no view model reads it", () => {
+  const unread = rawFileWith((clone) => {
+    (clone.fixed_requirements as unknown as { airline: { status: string } }).airline.status =
+      "probably_fine";
+  });
+  expect(() => readTrip(unread)).toThrow(/Unrecognised status "probably_fine"/);
+});
+
+test("the superseded record's own status does not fail the build", () => {
+  expect(() => readTrip(rawFile)).not.toThrow();
 });
 
 test("the five Stages come back in day order with start, finish, distance, difficulty, Overnight and ordered Waypoints", () => {
@@ -149,6 +178,13 @@ test("the five Stages come back in day order with start, finish, distance, diffi
     "2026-10-07",
     "2026-10-08",
     "2026-10-09",
+  ]);
+  expect(trip.stages.map((stage) => stage.weekday)).toEqual([
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
   ]);
 
   expect(
@@ -173,26 +209,22 @@ test("the five Stages come back in day order with start, finish, distance, diffi
     ["Atapuerca", "Burgos", "Burgos", 20.2, "Moderate"],
   ]);
 
-  expect(trip.stages[0].waypoints).toEqual([
-    "Logrono",
-    "Navarrete",
-    "Ventosa",
-    "Najera",
-  ]);
+  expect(trip.stages[0].waypoints).toEqual(["Navarrete", "Ventosa"]);
   expect(trip.stages[3].waypoints).toEqual([
-    "Belorado",
     "Tosantos",
     "Villambistia",
     "Espinosa del Camino",
     "Villafranca Montes de Oca",
     "San Juan de Ortega",
     "Ages",
-    "Atapuerca",
   ]);
+});
 
+test("a Waypoint is never the Stage's own start or Overnight", () => {
   for (const stage of trip.stages) {
-    expect(stage.waypoints[0]).toBe(stage.startsAt);
-    expect(stage.waypoints[stage.waypoints.length - 1]).toBe(stage.finishesAt);
+    expect(stage.waypoints).not.toContain(stage.startsAt);
+    expect(stage.waypoints).not.toContain(stage.finishesAt);
+    expect(stage.waypoints).not.toContain(stage.overnight);
   }
 });
 
@@ -204,9 +236,10 @@ test("Stage distances sum to the total stated in the data", () => {
 });
 
 test("Google Maps links are orientation-only and carry that caveat", () => {
-  const caveat = rawFile.navigation.google_maps_warning;
+  const caveat = rawNavigation.google_maps_warning;
+  expect(caveat).toContain("should not be presented as authoritative");
   expect(trip.summary.orientationMapCaveat).toBe(caveat);
-  expect(trip.summary.navigationPolicy).toBe(rawFile.navigation.primary_policy);
+  expect(trip.summary.navigationPolicy).toBe(rawNavigation.primary_policy);
 
   const links = trip.stages.flatMap((stage) => stage.orientationMaps);
   expect(links).toHaveLength(6);
@@ -223,22 +256,51 @@ test("Google Maps links are orientation-only and carry that caveat", () => {
 });
 
 test("a map link that is not orientation-only fails the build", () => {
-  const clone = JSON.parse(JSON.stringify(rawFile)) as RawTripData;
-  clone.walking_plan.stages[0].google_maps_role = "navigation";
-  expect(() => readTrip(clone)).toThrow(/Only orientation_only links/);
+  const navigational = rawFileWith((clone) => {
+    (
+      clone.walking_plan as unknown as { stages: { google_maps_role: string }[] }
+    ).stages[0].google_maps_role = "navigation";
+  });
+  expect(() => readTrip(navigational)).toThrow(/Only orientation_only links/);
+});
+
+test("the daily itinerary keeps each event's operator, distance and times", () => {
+  const sunday = trip.itinerary[0];
+  expect(sunday.date).toBe("2026-10-04");
+  expect(sunday.weekday).toBe("Sunday");
+  expect(sunday.category).toBe("Travel");
+  expect(sunday.events[0]).toMatchObject({
+    kind: "Flight",
+    operator: "KLM",
+    departureTimeApprox: "05:45",
+    arrivalTimeApprox: "11:15",
+    status: "PLANNED",
+  });
+
+  const saturdayBus = trip.itinerary[6].events[0];
+  expect(saturdayBus).toMatchObject({
+    kind: "Bus",
+    operator: "ALSA",
+    status: "TO VERIFY",
+  });
+
+  const mondayWalk = trip.itinerary[1].events[1];
+  expect(mondayWalk).toMatchObject({ kind: "Walk", distanceKm: 28.7, status: "PROPOSED" });
 });
 
 test("accommodation, transport and open items carry the facts pages need", () => {
   expect(trip.accommodation[0]).toEqual({
     date: "2026-10-04",
-    day: "Sunday",
+    weekday: "Sunday",
     location: "Bilbao",
     property: null,
     status: "TO BOOK",
     notes: "Arrival night after flying from Newcastle.",
   });
 
-  expect(trip.transport.map((leg) => [leg.date, leg.kind, leg.from, leg.to])).toEqual([
+  expect(
+    trip.transport.map((leg) => [leg.date, leg.kind, leg.from, leg.to]),
+  ).toEqual([
     ["2026-10-04", "Flight", "Newcastle", "Bilbao"],
     ["2026-10-05", "Bus", "Bilbao", "Logrono"],
     ["2026-10-10", "Bus", "Burgos", "Bilbao"],
@@ -247,6 +309,7 @@ test("accommodation, transport and open items carry the facts pages need", () =>
   expect(trip.transport[0].via).toBe("Amsterdam");
   expect(trip.transport[0].status).toBe("PLANNED");
   expect(trip.transport[1].status).toBe("TO VERIFY");
+  expect(trip.transport[1].fromStation).toBe("Bilbao Intermodal");
 
   expect(trip.openItems[0]).toEqual({
     item: "Book flights",

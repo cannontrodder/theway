@@ -1,4 +1,4 @@
-import tripDataFile from "../../reference-material/trip-data.json";
+import tripDataFile from "../data/trip-data.json";
 
 export type StatusLabel =
   | "FIXED"
@@ -26,6 +26,8 @@ const STATUS_LABELS: Record<string, StatusLabel> = {
 const NOT_A_STATUS_BUT_READS_AS: Record<string, StatusLabel> = {
   proposed_with_fixed_finish: "PROPOSED",
 };
+
+const SUPERSEDED_KEY = "original_plan";
 
 export interface TripSummary {
   name: string;
@@ -57,7 +59,7 @@ export interface OrientationMapLink {
 export interface Stage {
   number: number;
   date: string;
-  day: string;
+  weekday: string;
   startsAt: string;
   finishesAt: string;
   overnight: string;
@@ -88,7 +90,7 @@ export interface ItineraryEvent {
 
 export interface ItineraryDay {
   date: string;
-  day: string;
+  weekday: string;
   category: string;
   summary: string;
   events: ItineraryEvent[];
@@ -96,7 +98,7 @@ export interface ItineraryDay {
 
 export interface Accommodation {
   date: string;
-  day: string;
+  weekday: string;
   location: string;
   property: string | null;
   status: StatusLabel;
@@ -106,7 +108,7 @@ export interface Accommodation {
 export interface TransportLeg {
   kind: string;
   date: string;
-  day: string;
+  weekday: string;
   from: string;
   to: string;
   via?: string;
@@ -155,10 +157,8 @@ interface RawStage {
   google_maps_role: string;
   google_maps_url?: string;
   google_maps_segments?: {
-    segment: string;
     start: string;
     finish: string;
-    waypoints: string[];
     url: string;
   }[];
 }
@@ -190,7 +190,7 @@ interface RawBus {
   plan?: string;
 }
 
-export interface RawTripData {
+interface RawTripData {
   trip: {
     name: string;
     camino_route: string;
@@ -202,7 +202,6 @@ export interface RawTripData {
     walking_start_date: string;
     walking_finish_date: string;
     walking_days: number;
-    walking_distance_km_approx: number;
     origin_city: string;
     arrival_city: string;
     departure_city: string;
@@ -234,6 +233,7 @@ export interface RawTripData {
       status: string;
       route?: string;
       location?: string;
+      airline?: string;
       operator_likely?: string;
       distance_km_approx?: number;
       departure_approx?: string;
@@ -256,9 +256,29 @@ function toStatusLabel(raw: string): StatusLabel {
   return label;
 }
 
+function rejectUnrecognisedStatuses(value: unknown, path: string) {
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => rejectUnrecognisedStatuses(entry, `${path}[${index}]`));
+    return;
+  }
+  if (value === null || typeof value !== "object") return;
+
+  for (const [key, nested] of Object.entries(value)) {
+    if (key === SUPERSEDED_KEY) continue;
+    if (key === "status" && typeof nested === "string") toStatusLabel(nested);
+    rejectUnrecognisedStatuses(nested, `${path}.${key}`);
+  }
+}
+
 function humanise(raw: string): string {
   const words = raw.replace(/_/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+function toWaypoints(stage: RawStage): string[] {
+  return stage.waypoints.filter(
+    (place) => place !== stage.start && place !== stage.finish,
+  );
 }
 
 function toOrientationMaps(stage: RawStage, caveat: string): OrientationMapLink[] {
@@ -292,7 +312,7 @@ function toFlightLeg(flight: RawFlight): TransportLeg {
   return {
     kind: "Flight",
     date: flight.date,
-    day: flight.day,
+    weekday: flight.day,
     from: firstHop.from,
     to: lastHop.to,
     via: firstHop.to === lastHop.to ? undefined : firstHop.to,
@@ -309,7 +329,7 @@ function toBusLeg(bus: RawBus): TransportLeg {
   return {
     kind: humanise(bus.mode),
     date: bus.date,
-    day: bus.day,
+    weekday: bus.day,
     from: bus.origin,
     to: bus.destination,
     operator: bus.operator_likely,
@@ -321,7 +341,10 @@ function toBusLeg(bus: RawBus): TransportLeg {
   };
 }
 
-export function readTrip(data: RawTripData): Trip {
+export function readTrip(rawData: unknown): Trip {
+  rejectUnrecognisedStatuses(rawData, "trip-data.json");
+
+  const data = rawData as RawTripData;
   const { trip, walking_plan, navigation } = data;
   const caveat = navigation.google_maps_warning;
 
@@ -351,13 +374,13 @@ export function readTrip(data: RawTripData): Trip {
       .map((stage) => ({
         number: stage.day_number,
         date: stage.date,
-        day: stage.day,
+        weekday: stage.day,
         startsAt: stage.start,
         finishesAt: stage.finish,
         overnight: stage.overnight ?? stage.finish,
         distanceKm: stage.distance_km_approx,
         difficulty: humanise(stage.difficulty_planning),
-        waypoints: [...stage.waypoints],
+        waypoints: toWaypoints(stage),
         status: toStatusLabel(stage.status),
         orientationMaps: toOrientationMaps(stage, caveat),
         preWalkTransport: stage.pre_walk_transport,
@@ -368,7 +391,7 @@ export function readTrip(data: RawTripData): Trip {
       })),
     itinerary: data.daily_itinerary.map((day) => ({
       date: day.date,
-      day: day.day,
+      weekday: day.day,
       category: humanise(day.category),
       summary: day.summary,
       events: day.events.map((event) => ({
@@ -376,7 +399,7 @@ export function readTrip(data: RawTripData): Trip {
         status: toStatusLabel(event.status),
         route: event.route,
         location: event.location,
-        operator: event.operator_likely,
+        operator: event.airline ?? event.operator_likely,
         distanceKm: event.distance_km_approx,
         departureTimeApprox: event.departure_approx,
         arrivalTimeApprox: event.arrival_approx ?? event.arrival_newcastle_approx,
@@ -386,7 +409,7 @@ export function readTrip(data: RawTripData): Trip {
     })),
     accommodation: data.accommodation_requirements.map((night) => ({
       date: night.date,
-      day: night.day,
+      weekday: night.day,
       location: night.location,
       property: night.property,
       status: toStatusLabel(night.status),
@@ -406,4 +429,4 @@ export function readTrip(data: RawTripData): Trip {
   };
 }
 
-export const trip: Trip = readTrip(tripDataFile as RawTripData);
+export const trip: Trip = readTrip(tripDataFile);

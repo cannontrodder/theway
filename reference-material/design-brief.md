@@ -4,7 +4,7 @@ The visual and editorial system for **theway.cannontrodder.net** — a personal,
 
 ## Sources of truth
 
-- **Trip facts** — dates, distances, place names, bookings — come from `reference-material/trip-data.json`. Any number in this brief is illustrative; where the two disagree, the JSON wins.
+- **Trip facts** — dates, distances, place names, bookings — come from `src/data/trip-data.json`, read through `src/lib/trip.ts`. Any number in this brief is illustrative; where the two disagree, the JSON wins.
 - **Design tokens** — once the tokens below are expressed in code (CSS custom properties, a Tailwind theme), that code becomes the source of truth and this section becomes the rationale behind it.
 
 ## The feel: a field guide
