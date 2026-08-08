@@ -35,7 +35,10 @@ test("the four headline figures render below the hero", async ({ page }) => {
 test("the total distance reads as approximate", async ({ page }) => {
   await page.goto("/");
 
-  const distance = page.getByRole("listitem").filter({ hasText: "~123 km" });
+  const distance = page
+    .getByRole("region", { name: "Headline figures" })
+    .getByRole("listitem")
+    .filter({ hasText: "~123 km" });
   await expect(distance.getByText("APPROX")).toBeVisible();
   await expect(distance).toContainText("distance");
 });

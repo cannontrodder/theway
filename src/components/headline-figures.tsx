@@ -6,43 +6,8 @@ import {
 } from "@/lib/display";
 import { trip } from "@/lib/trip";
 
+import { BootIcon, PlaneIcon } from "./mode-icon";
 import { StatusChip } from "./status-chip";
-
-function PlaneIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2.5c1.1 0 1.8 1.4 1.8 3.2v3.6l7.2 4.3v2.1l-7.2-2.2v3.6l2.6 1.9v1.8L12 19.6l-4.4 1.2v-1.8l2.6-1.9v-3.6L3 15.7v-2.1l7.2-4.3V5.7c0-1.8.7-3.2 1.8-3.2z" />
-    </svg>
-  );
-}
-
-function BootIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5.5 3.5h4.2l.4 5.6 6.9 3.3a4.5 4.5 0 0 1 2.5 4v3.1H5.5z" />
-      <path d="M5.5 16.5h13.8" />
-      <path d="M9.9 9.1 12 11m.6-.4L14.7 12" />
-    </svg>
-  );
-}
 
 function RouteIcon({ className }: { className?: string }) {
   return (

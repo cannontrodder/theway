@@ -124,6 +124,44 @@ export function formatWeekdayDate(weekday: string, isoDate: string): string {
   return `${shortWeekday(weekday)} ${day} ${SHORT_MONTHS[monthIndex]}`;
 }
 
+export function formatLongWeekdayDate(weekday: string, isoDate: string): string {
+  const { day, monthIndex } = parseIsoDate(isoDate);
+  return `${weekday} ${day} ${LONG_MONTHS[monthIndex]}`;
+}
+
+export function formatDayAndMonth(isoDate: string): string {
+  const { day, monthIndex } = parseIsoDate(isoDate);
+  return `${day} ${SHORT_MONTHS[monthIndex]}`;
+}
+
+export function formatDayAndMonthSpan(
+  startIsoDate: string,
+  endIsoDate: string,
+): string {
+  const start = parseIsoDate(startIsoDate);
+  const end = parseIsoDate(endIsoDate);
+  if (start.monthIndex === end.monthIndex && start.year === end.year) {
+    return `${start.day}${EN_DASH}${formatDayAndMonth(endIsoDate)}`;
+  }
+  return `${formatDayAndMonth(startIsoDate)} ${EN_DASH} ${formatDayAndMonth(endIsoDate)}`;
+}
+
+export function formatRoute(raw: string): string {
+  return raw
+    .split("->")
+    .map((part) => placeName(part.trim()))
+    .join(" → ");
+}
+
+export function formatApproxTimeSpan(
+  departure?: string,
+  arrival?: string,
+): string | undefined {
+  if (!departure && !arrival) return undefined;
+  if (departure && arrival) return `${departure}${EN_DASH}${arrival} approx`;
+  return `${departure ?? arrival} approx`;
+}
+
 export function formatWeekdayDateSpan(
   start: { weekday: string; date: string },
   end: { weekday: string; date: string },
@@ -150,6 +188,8 @@ export function formatMonthAndYear(isoDate: string): string {
   const { monthIndex, year } = parseIsoDate(isoDate);
   return `${LONG_MONTHS[monthIndex]} ${year}`;
 }
+
+export const ITINERARY_PATH = "/itinerary/";
 
 export function stagePath(stage: { number: number }): string {
   return `/day/${stage.number}/`;

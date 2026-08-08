@@ -1,12 +1,13 @@
 import Link from "next/link";
 
-import { stagePath } from "@/lib/display";
+import { ITINERARY_PATH, stagePath } from "@/lib/display";
 import { trip } from "@/lib/trip";
 
 import { Wordmark } from "./wordmark";
 
 const navLinks = [
   { href: "/", label: "Overview" },
+  { href: ITINERARY_PATH, label: "Itinerary" },
   { href: stagePath(trip.stages[0]), label: "Stages" },
   { href: "/map/", label: "Map" },
 ];

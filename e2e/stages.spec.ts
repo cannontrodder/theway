@@ -121,20 +121,27 @@ test("tapping a Stage card opens that Stage page", async ({ page }) => {
   );
 });
 
-test("the Walking days section is the first thing below the headline figures", async ({
+test("the Walking days section follows the journey strip, which follows the headline figures", async ({
   page,
 }) => {
   await page.goto("/");
 
-  const figures = (await page
-    .getByRole("region", { name: "Headline figures" })
-    .boundingBox())!;
-  const cardsBox = (await page
-    .getByRole("region", { name: "Walking days" })
-    .boundingBox())!;
+  const bottomOf = async (name: string) => {
+    const box = (await page.getByRole("region", { name }).boundingBox())!;
+    return box.y + box.height;
+  };
+  const topOf = async (name: string) =>
+    (await page.getByRole("region", { name }).boundingBox())!.y;
 
-  expect(cardsBox.y).toBeGreaterThanOrEqual(figures.y + figures.height - 1);
-  expect(cardsBox.y - (figures.y + figures.height)).toBeLessThan(80);
+  expect(await topOf("The journey at a glance")).toBeGreaterThanOrEqual(
+    (await bottomOf("Headline figures")) - 1,
+  );
+  expect(await topOf("Walking days")).toBeGreaterThanOrEqual(
+    (await bottomOf("The journey at a glance")) - 1,
+  );
+  expect(
+    (await topOf("Walking days")) - (await bottomOf("The journey at a glance")),
+  ).toBeLessThan(80);
 });
 
 test("the first Stage card needs no sideways scrolling and no menu to reach", async ({
