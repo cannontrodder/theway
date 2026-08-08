@@ -26,8 +26,9 @@ Stage, Overnight, Waypoint, Wordmark, Shell mark, Route line. Read the ADRs in
 without their reasoning, and ADR-0001 is one an agent would otherwise "fix".
 `reference-material/design-brief.md` holds the visual system,
 `reference-material/homepage-mockup.png` is the tightest statement of it, and
-`reference-material/trip-data.json` is the only source of trip facts. Every date,
-distance, place name and Status comes from that file. Where the brief and the
+`src/data/trip-data.json` is the only source of trip facts. Every date,
+distance, place name and Status comes from that file, read through
+`src/lib/trip.ts`, which is the only code that knows its raw shape. Where the brief and the
 mockup disagree on layout, the mockup wins.
 
 **Build it** with `/implement`, which drives `/tdd` at the seams the parent spec
