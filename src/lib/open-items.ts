@@ -1,8 +1,9 @@
 import { STAYS_PATH, TRAVEL_PATH, stagePath } from "./display";
+import type { JourneyMode } from "./journey";
 import type { OpenItem, Stage } from "./trip";
 import { trip } from "./trip";
 
-export type OpenItemMode = "Flight" | "Bus" | "Stay" | "Walk";
+export type OpenItemMode = JourneyMode | "Stay";
 
 export interface OpenItemLink {
   path: string;
@@ -23,12 +24,12 @@ const PRIORITY_LABELS: Record<string, string> = {
 
 const PRIORITIES_IN_ORDER = ["high", "medium", "low"];
 
-const STAY_WORDS = ["accommodation", "hotel"];
-const FLIGHT_WORDS = ["flight", "flights", "airport", "airline"];
-const BUS_WORDS = ["bus"];
+const STAY_WORDS = ["accommodation", "hotel", "hostel", "albergue"];
+const FLIGHT_WORDS = ["flight", "airport", "airline"];
+const BUS_WORDS = ["bus", "coach"];
 
 function mentions(item: OpenItem, phrase: string): boolean {
-  return new RegExp(`\\b${phrase}\\b`, "i").test(item.item);
+  return new RegExp(`\\b${phrase}e?s?\\b`, "i").test(item.item);
 }
 
 function stageNamedIn(item: OpenItem): Stage | undefined {

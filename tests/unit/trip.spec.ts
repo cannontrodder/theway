@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 
 import {
   findStage,
-  nextStage,
+  firstStage,
   overnightStay,
   readTrip,
   stageEndingAt,
@@ -164,6 +164,7 @@ test("the final weekend runs from the Saturday night in Bilbao to the flight hom
     location: "Bilbao",
     startDate: "2026-10-10",
     endDate: "2026-10-11",
+    weekdays: ["Saturday", "Sunday"],
     status: "FIXED",
   });
   expect(
@@ -172,9 +173,9 @@ test("the final weekend runs from the Saturday night in Bilbao to the flight hom
   expect(trip.finalWeekend.endDate).toBe(trip.summary.endDate);
 });
 
-test("the next Stage is the first one by date, not whichever the data happens to list first", () => {
-  expect(nextStage()).toBe(trip.stages[0]);
-  expect(nextStage().date).toBe(
+test("the first Stage is the earliest by date, whatever order the data lists them in", () => {
+  expect(firstStage()).toBe(trip.stages[0]);
+  expect(firstStage().date).toBe(
     trip.stages.map((stage) => stage.date).sort()[0],
   );
 

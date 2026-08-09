@@ -142,6 +142,7 @@ export interface FinalWeekend {
   location: string;
   startDate: string;
   endDate: string;
+  weekdays: string[];
   status: StatusLabel;
 }
 
@@ -385,6 +386,11 @@ export function readTrip(rawData: unknown): Trip {
       location: saturday_night.location,
       startDate: saturday_night.date,
       endDate: trip.end_date,
+      weekdays: data.daily_itinerary
+        .filter(
+          (day) => day.date >= saturday_night.date && day.date <= trip.end_date,
+        )
+        .map((day) => day.day),
       status: toStatusLabel(saturday_night.status),
     },
     fixedFinish: {
@@ -493,8 +499,6 @@ export function stageEndingAt(night: Accommodation): Stage | undefined {
   return trip.stages.find((stage) => isTheOvernightOf(night, stage));
 }
 
-export function nextStage(): Stage {
-  return trip.stages.reduce((earliest, stage) =>
-    stage.date < earliest.date ? stage : earliest,
-  );
+export function firstStage(): Stage {
+  return trip.stages[0];
 }

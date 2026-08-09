@@ -8,14 +8,14 @@ import {
   stagePath,
   stageRoute,
 } from "@/lib/display";
-import { nextStage, trip } from "@/lib/trip";
+import { firstStage, trip } from "@/lib/trip";
 
 import { BedIcon } from "./bed-icon";
 import { BootIcon } from "./mode-icon";
 import { StatusChip } from "./status-chip";
 
 export function UpNext() {
-  const stage = nextStage();
+  const stage = firstStage();
   const note = stage.mainRisk ?? stage.planningReason;
 
   return (

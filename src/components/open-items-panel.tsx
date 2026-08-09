@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { sentence, spellOutCount } from "@/lib/display";
+import { sentence } from "@/lib/display";
 import type { OpenItemMode } from "@/lib/open-items";
 import { openItemGroups, openItemLink } from "@/lib/open-items";
 import type { OpenItem } from "@/lib/trip";
@@ -8,14 +8,12 @@ import { trip } from "@/lib/trip";
 
 import { BedIcon } from "./bed-icon";
 import { LowerPanel } from "./lower-panel";
-import { BootIcon, BusIcon, PlaneIcon } from "./mode-icon";
+import { ModeIcon } from "./mode-icon";
 import { StatusChip } from "./status-chip";
 
 function ItemIcon({ mode }: { mode?: OpenItemMode }) {
   if (mode === "Stay") return <BedIcon className="size-4 shrink-0" />;
-  if (mode === "Bus") return <BusIcon className="size-4 shrink-0" />;
-  if (mode === "Flight") return <PlaneIcon className="size-4 shrink-0" />;
-  if (mode === "Walk") return <BootIcon className="size-4 shrink-0" />;
+  if (mode) return <ModeIcon mode={mode} className="size-4 shrink-0" />;
   return <span aria-hidden="true" className="bg-olive size-2 shrink-0 rounded-full" />;
 }
 
@@ -59,8 +57,8 @@ export function OpenItemsPanel() {
   return (
     <LowerPanel heading="To book / to verify" testId="open-items-panel">
       <p data-testid="open-items-count" className="text-muted text-xs">
-        All {spellOutCount(trip.openItems.length)} open items, highest priority
-        first. Nothing is left out.
+        All {trip.openItems.length} open items, highest priority first. Nothing
+        is left out.
       </p>
 
       {groups.map((group) => (

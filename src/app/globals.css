@@ -31,10 +31,6 @@
       content-visibility: visible;
       block-size: auto;
     }
-
-    .open-on-wide > summary {
-      pointer-events: none;
-    }
   }
 }
 

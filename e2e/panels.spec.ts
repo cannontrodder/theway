@@ -79,6 +79,21 @@ const OPEN_ITEMS = [
     status: "TO DO",
     href: "/travel/",
   },
+  {
+    text: "Add realistic walking-time estimates including breaks",
+    status: "TO DO",
+    href: undefined,
+  },
+  {
+    text: "Add sunrise, sunset and expected October weather",
+    status: "TO DO",
+    href: undefined,
+  },
+  {
+    text: "Research cafes, lunch stops, water, shops and pharmacies for every stage",
+    status: "TO DO",
+    href: undefined,
+  },
 ];
 
 async function openEveryPanel(page: import("@playwright/test").Page) {
@@ -155,6 +170,7 @@ test("the To book / to verify panel lists every open item with its Status", asyn
 
   const items = panel.getByTestId("open-item");
   await expect(items).toHaveCount(OPEN_ITEM_COUNT);
+  expect(OPEN_ITEMS).toHaveLength(OPEN_ITEM_COUNT);
 
   for (const expected of OPEN_ITEMS) {
     const row = items.filter({ hasText: expected.text });
@@ -251,7 +267,12 @@ test("the Highlights panel carries the Friday night in Burgos and the weekend in
   await expect(burgos.getByRole("heading")).toHaveText("Burgos on the Friday");
   await expect(burgos).toContainText("Friday 9 October");
   await expect(burgos).toContainText("proper night out after completing the walk");
-  await expect(burgos.getByTestId("highlight-status")).toHaveText("FIXED");
+  await expect(burgos).toContainText("Walking into Burgos that day is settled");
+  await expect(burgos.getByTestId("highlight-fact")).toHaveCount(2);
+  await expect(burgos.getByTestId("highlight-status")).toHaveText([
+    "FIXED",
+    "FIXED",
+  ]);
   await expect(burgos.getByTestId("highlight-link")).toHaveAttribute(
     "href",
     "/day/5/",

@@ -18,8 +18,7 @@ import { StatusChip } from "./status-chip";
 interface Highlight {
   heading: string;
   when: string;
-  prose: string;
-  status: StatusLabel;
+  facts: { prose: string; status: StatusLabel }[];
   href: string;
   linkLabel: string;
 }
@@ -38,18 +37,30 @@ function highlights(): Highlight[] {
 
   return [
     {
-      heading: `${placeName(fixedFinish.location)} on the Friday`,
+      heading: `${placeName(fixedFinish.location)} on the ${fixedFinish.weekday}`,
       when: formatLongWeekdayDate(fixedFinish.weekday, fixedFinish.date),
-      prose: `${sentence(fixedFinish.eveningPlan)}. Walking into ${placeName(fixedFinish.location)} that day is settled, whatever else moves.`,
-      status: fixedFinish.eveningPlanStatus,
+      facts: [
+        {
+          prose: `${sentence(fixedFinish.eveningPlan)}.`,
+          status: fixedFinish.eveningPlanStatus,
+        },
+        {
+          prose: `Walking into ${placeName(fixedFinish.location)} that day is settled, whatever else moves.`,
+          status: fixedFinish.status,
+        },
+      ],
       href: stagePath(finalStage),
       linkLabel: `Stage ${finalStage.number} →`,
     },
     {
       heading: `The weekend in ${placeName(finalWeekend.location)}`,
       when: formatDayAndMonthSpan(finalWeekend.startDate, finalWeekend.endDate),
-      prose: `Saturday and Sunday in ${placeName(finalWeekend.location)} with the walking done, then the flight home to ${placeName(summary.originCity)}.`,
-      status: finalWeekend.status,
+      facts: [
+        {
+          prose: `${finalWeekend.weekdays.join(" and ")} in ${placeName(finalWeekend.location)} with the walking done, then the flight home to ${placeName(summary.originCity)}.`,
+          status: finalWeekend.status,
+        },
+      ],
       href: nightPath(finalWeekendNight),
       linkLabel: "That night →",
     },
@@ -68,24 +79,28 @@ export function Highlights() {
           <ImageSlot className="rounded-small size-16 shrink-0" />
 
           <div className="gap-xs flex flex-col">
-            <div className="gap-sm flex flex-wrap items-center">
-              <h3 className="font-display mr-auto text-lg leading-tight">
-                {highlight.heading}
-              </h3>
-              <StatusChip
-                status={highlight.status}
-                className="text-muted shrink-0"
-                testId="highlight-status"
-              />
-            </div>
+            <h3 className="font-display text-lg leading-tight">
+              {highlight.heading}
+            </h3>
 
             <p className="text-muted text-xs tracking-[0.08em] uppercase">
               {highlight.when}
             </p>
 
-            <p className="max-w-[40ch] text-sm leading-relaxed">
-              {highlight.prose}
-            </p>
+            {highlight.facts.map((fact) => (
+              <p
+                key={fact.prose}
+                data-testid="highlight-fact"
+                className="gap-sm flex max-w-[40ch] flex-wrap items-baseline text-sm leading-relaxed"
+              >
+                <span>{fact.prose}</span>
+                <StatusChip
+                  status={fact.status}
+                  className="text-muted shrink-0"
+                  testId="highlight-status"
+                />
+              </p>
+            ))}
 
             <Link
               href={highlight.href}
