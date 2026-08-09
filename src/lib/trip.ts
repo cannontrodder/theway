@@ -134,12 +134,22 @@ export interface FixedFinish {
   date: string;
   weekday: string;
   status: StatusLabel;
+  eveningPlan: string;
   eveningPlanStatus: StatusLabel;
+}
+
+export interface FinalWeekend {
+  location: string;
+  startDate: string;
+  endDate: string;
+  weekdays: string[];
+  status: StatusLabel;
 }
 
 export interface Trip {
   summary: TripSummary;
   fixedFinish: FixedFinish;
+  finalWeekend: FinalWeekend;
   stages: Stage[];
   itinerary: ItineraryDay[];
   accommodation: Accommodation[];
@@ -202,7 +212,8 @@ interface RawBus {
 interface RawTripData {
   fixed_requirements: {
     camino_finish: { location: string; date: string; status: string };
-    friday_night: { status: string };
+    friday_night: { location: string; date: string; plan: string; status: string };
+    saturday_night: { location: string; date: string; status: string };
   };
   trip: {
     name: string;
@@ -368,14 +379,26 @@ export function readTrip(rawData: unknown): Trip {
   const data = rawData as RawTripData;
   const { trip, walking_plan, navigation } = data;
   const caveat = navigation.google_maps_warning;
-  const { camino_finish, friday_night } = data.fixed_requirements;
+  const { camino_finish, friday_night, saturday_night } = data.fixed_requirements;
 
   return {
+    finalWeekend: {
+      location: saturday_night.location,
+      startDate: saturday_night.date,
+      endDate: trip.end_date,
+      weekdays: data.daily_itinerary
+        .filter(
+          (day) => day.date >= saturday_night.date && day.date <= trip.end_date,
+        )
+        .map((day) => day.day),
+      status: toStatusLabel(saturday_night.status),
+    },
     fixedFinish: {
       location: camino_finish.location,
       date: camino_finish.date,
       weekday: weekdayOf(data, camino_finish.date),
       status: toStatusLabel(camino_finish.status),
+      eveningPlan: friday_night.plan,
       eveningPlanStatus: toStatusLabel(friday_night.status),
     },
     summary: {
@@ -474,4 +497,8 @@ export function overnightStay(stage: Stage): Accommodation | undefined {
 
 export function stageEndingAt(night: Accommodation): Stage | undefined {
   return trip.stages.find((stage) => isTheOvernightOf(night, stage));
+}
+
+export function firstStage(): Stage {
+  return trip.stages[0];
 }

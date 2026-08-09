@@ -25,6 +25,15 @@
   --spacing-xxl: 64px;
 }
 
+@layer components {
+  @media (width >= 40rem) {
+    .open-on-wide::details-content {
+      content-visibility: visible;
+      block-size: auto;
+    }
+  }
+}
+
 @layer base {
   body {
     background-color: var(--color-paper);
