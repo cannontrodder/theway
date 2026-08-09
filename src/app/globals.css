@@ -3,11 +3,11 @@
 @theme {
   --color-ink: #0F1D34;
   --color-blue: #2E5B7B;
-  --color-olive: #6B7F4E;
+  --color-olive: #5F7245;
   --color-ochre: #D2A74A;
   --color-paper: #F2EFE6;
   --color-white: #FAF9F5;
-  --color-muted: #73766F;
+  --color-muted: #5F625A;
   --color-border: #D8D3C6;
 
   --font-display: var(--font-playfair-display), Georgia, serif;
@@ -23,9 +23,26 @@
   --spacing-lg: 24px;
   --spacing-xl: 40px;
   --spacing-xxl: 64px;
+
+  --breakpoint-xs: 26rem;
+
+  --size-tap: 44px;
 }
 
 @layer components {
+  .tap-target {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--size-tap);
+    min-width: var(--size-tap);
+    justify-content: center;
+  }
+
+  .prose-body {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
   @media (width >= 40rem) {
     .open-on-wide::details-content {
       content-visibility: visible;

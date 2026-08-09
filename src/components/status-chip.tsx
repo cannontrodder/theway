@@ -12,7 +12,7 @@ export function StatusChip({
   return (
     <span
       data-testid={testId}
-      className={`rounded-small px-xs border border-current text-[0.625rem] leading-normal font-semibold tracking-[0.12em] uppercase ${className ?? ""}`}
+      className={`rounded-small px-xs border border-current text-xs leading-normal font-semibold tracking-[0.12em] whitespace-nowrap uppercase ${className ?? ""}`}
     >
       {status}
     </span>

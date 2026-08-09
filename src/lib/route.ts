@@ -32,7 +32,7 @@ export interface RouteBounds {
   north: number;
 }
 
-const STAGE_COLOURS = ["#6B7F4E", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"];
+const STAGE_COLOURS = ["#5F7245", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"];
 
 function readRoutePlaces(raw: {
   source: string;

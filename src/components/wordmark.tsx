@@ -11,7 +11,7 @@ export function Wordmark({
     <span className={`gap-sm flex items-center ${className ?? ""}`}>
       <ShellMark className="size-8 shrink-0 text-ochre" />
       <span className="flex flex-col">
-        <span className="text-xl leading-none font-bold tracking-[0.16em] uppercase">
+        <span className="text-lg leading-none font-bold tracking-[0.12em] whitespace-nowrap uppercase sm:text-xl sm:tracking-[0.16em]">
           The Way
         </span>
         {strapline ? (

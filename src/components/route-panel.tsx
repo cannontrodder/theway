@@ -56,7 +56,7 @@ export function RoutePanel() {
           <h2 className="font-display text-xl tracking-[0.06em] uppercase">
             The route
           </h2>
-          <p className="text-muted max-w-[36ch] text-sm">
+          <p className="text-muted prose-body max-w-[36ch]">
             {placeName(summary.startsAt)} to {placeName(summary.finishesAt)} via
             the {placeName(summary.route)}
           </p>
@@ -64,7 +64,7 @@ export function RoutePanel() {
 
         <Link
           href="/map/"
-          className="py-sm shrink-0 text-sm font-semibold whitespace-nowrap underline"
+          className="tap-target shrink-0 text-sm font-semibold whitespace-nowrap underline"
         >
           Open map →
         </Link>

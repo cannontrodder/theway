@@ -12,7 +12,7 @@ export function LowerPanel({
       data-testid={testId}
       className="border-border rounded-medium bg-white group open-on-wide border"
     >
-      <summary className="px-md py-md gap-sm flex min-h-11 cursor-pointer list-none items-center sm:cursor-default">
+      <summary className="px-md py-md gap-sm tap-target w-full cursor-pointer list-none sm:cursor-default">
         <h2 className="font-display mr-auto text-base tracking-[0.06em] uppercase">
           {heading}
         </h2>

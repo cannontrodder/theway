@@ -223,11 +223,11 @@ test("the design tokens are the source of truth for colour, type, radius and spa
   expect(tokens).toMatchObject({
     "--color-ink": "#0f1d34",
     "--color-blue": "#2e5b7b",
-    "--color-olive": "#6b7f4e",
+    "--color-olive": "#5f7245",
     "--color-ochre": "#d2a74a",
     "--color-paper": "#f2efe6",
     "--color-white": "#faf9f5",
-    "--color-muted": "#73766f",
+    "--color-muted": "#5f625a",
     "--color-border": "#d8d3c6",
     "--radius-small": "6px",
     "--radius-medium": "10px",

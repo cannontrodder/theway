@@ -23,9 +23,9 @@ function Item({ item }: { item: OpenItem }) {
   return (
     <li
       data-testid="open-item"
-      className="border-border py-sm gap-sm flex flex-wrap items-baseline border-b last:border-b-0"
+      className="border-border py-xs gap-sm flex flex-wrap items-center border-b last:border-b-0"
     >
-      <span className="gap-sm mr-auto flex min-w-0 flex-1 items-baseline">
+      <span className="gap-sm mr-auto flex min-w-0 flex-1 items-center">
         <span className="text-muted w-4 shrink-0 grid place-items-center">
           <ItemIcon mode={link?.mode} />
         </span>
@@ -33,12 +33,12 @@ function Item({ item }: { item: OpenItem }) {
           <Link
             href={link.path}
             data-testid="open-item-link"
-            className="max-w-[36ch] text-sm underline"
+            className="tap-target prose-body max-w-[36ch] underline"
           >
             {sentence(item.item)}
           </Link>
         ) : (
-          <span className="max-w-[36ch] text-sm">{sentence(item.item)}</span>
+          <span className="prose-body max-w-[36ch]">{sentence(item.item)}</span>
         )}
       </span>
 
@@ -56,7 +56,7 @@ export function OpenItemsPanel() {
 
   return (
     <LowerPanel heading="To book / to verify" testId="open-items-panel">
-      <p data-testid="open-items-count" className="text-muted text-xs">
+      <p data-testid="open-items-count" className="text-muted prose-body">
         All {trip.openItems.length} open items, highest priority first. Nothing
         is left out.
       </p>
@@ -77,7 +77,7 @@ export function OpenItemsPanel() {
         </div>
       ))}
 
-      <p className="text-muted text-xs">
+      <p className="text-muted prose-body">
         Each item links to the page it belongs to, where one exists.
       </p>
     </LowerPanel>

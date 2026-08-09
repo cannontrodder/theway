@@ -112,7 +112,7 @@ export default async function StagePage({
             </p>
           ) : null}
           {stage.mainRisk ? (
-            <p className="max-w-[60ch] text-sm leading-relaxed">
+            <p className="prose-body max-w-[60ch]">
               {sentence(stage.mainRisk)}
             </p>
           ) : null}
@@ -125,7 +125,7 @@ export default async function StagePage({
           className="border-border rounded-medium px-md py-md gap-sm bg-white flex flex-col border"
         >
           <h2 className="font-display text-lg">The ground underfoot</h2>
-          <p className="max-w-[60ch] text-sm leading-relaxed">
+          <p className="prose-body max-w-[60ch]">
             {sentence(stage.terrainNote)}
           </p>
         </section>
@@ -145,7 +145,7 @@ export default async function StagePage({
             </span>
             <StatusChip status={fixedFinish.status} className="text-muted" />
           </p>
-          <p className="max-w-[60ch] text-sm leading-relaxed">
+          <p className="prose-body max-w-[60ch]">
             The Stage that gets us there still reads{" "}
             <StatusChip status={stage.status} className="text-muted" />, but
             walking into {placeName(fixedFinish.location)} that day is not up for
@@ -174,7 +174,7 @@ export default async function StagePage({
             </p>
           ) : null}
           {stage.planningReason ? (
-            <p className="max-w-[60ch] text-sm leading-relaxed">
+            <p className="prose-body max-w-[60ch]">
               {sentence(stage.planningReason)}
             </p>
           ) : null}
@@ -197,7 +197,7 @@ export default async function StagePage({
             </li>
           ))}
         </ol>
-        <p className="text-muted text-xs">Passed through, not slept in.</p>
+        <p className="text-muted prose-body">Passed through, not slept in.</p>
       </section>
 
       <section
@@ -216,7 +216,7 @@ export default async function StagePage({
           {stay ? <StatusChip status={stay.status} className="text-muted" /> : null}
         </p>
         {stay?.notes ? (
-          <p className="max-w-[60ch] text-sm leading-relaxed">
+          <p className="prose-body max-w-[60ch]">
             {sentence(stay.notes)}
           </p>
         ) : null}
@@ -225,7 +225,7 @@ export default async function StagePage({
             <Link
               href={nightPath(stay)}
               data-testid="stays-link"
-              className="py-sm text-sm font-semibold underline"
+              className="tap-target text-sm font-semibold underline"
             >
               This night on the Stays page →
             </Link>
@@ -242,12 +242,12 @@ export default async function StagePage({
           <Link
             href={`/map/#stage-${stage.number}`}
             data-testid="route-map-link"
-            className="py-sm text-sm font-semibold underline"
+            className="tap-target text-sm font-semibold underline"
           >
             {stageRoute(stage)} on the route map
           </Link>
         </p>
-        <p className="max-w-[60ch] text-muted text-xs leading-relaxed">
+        <p className="text-muted prose-body max-w-[60ch]">
           The whole walk, one colour per day. The line is indicative, not a
           surveyed track.
         </p>
@@ -265,14 +265,14 @@ export default async function StagePage({
                 href={map.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-sm block text-sm underline"
+                className="tap-target text-sm underline"
               >
                 {placeName(map.label)}
               </a>
             </li>
           ))}
         </ul>
-        <p className="max-w-[60ch] text-muted text-xs leading-relaxed">
+        <p className="text-muted prose-body max-w-[60ch]">
           {sentence(summary.orientationMapCaveat)}
         </p>
       </section>
@@ -284,14 +284,14 @@ export default async function StagePage({
             <Link
               key={other.number}
               href={stagePath(other)}
-              className="border-border rounded-medium px-md py-sm border text-sm"
+              className="border-border rounded-medium px-md tap-target border text-sm"
             >
               Stage {other.number}
             </Link>
           ))}
         <Link
           href="/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Overview
         </Link>

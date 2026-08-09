@@ -29,7 +29,7 @@ export function RouteLegend({ linked }: { linked: boolean }) {
               <Link
                 href={stagePath(stage)}
                 aria-label={`Stage ${stage.number}: ${stageRoute(stage)}, ${formatWeekdayDate(stage.weekday, stage.date)}`}
-                className="gap-xs py-xs flex items-center no-underline"
+                className="gap-xs tap-target no-underline"
               >
                 {swatch}
               </Link>
