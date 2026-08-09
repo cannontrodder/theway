@@ -49,20 +49,20 @@ function Night({ night }: { night: Accommodation }) {
       </p>
 
       {night.notes ? (
-        <p className="max-w-[52ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[52ch]">
           {sentence(night.notes)}
         </p>
       ) : null}
 
       {stage ? (
-        <p className="gap-sm flex flex-wrap items-baseline text-sm">
+        <p className="gap-sm prose-body flex flex-wrap items-baseline">
           <span className="text-muted">
             The Overnight at the end of this walking day.
           </span>
           <Link
             href={stagePath(stage)}
             data-testid="stay-stage-link"
-            className="shrink-0 font-semibold whitespace-nowrap underline"
+            className="tap-target shrink-0 font-semibold whitespace-nowrap underline"
           >
             Stage {stage.number} →
           </Link>
@@ -82,7 +82,7 @@ export default function StaysPage() {
           {spellOutCount(nights.length)} nights away
         </p>
         <h1 className="font-display text-3xl leading-tight">Where we sleep</h1>
-        <p className="max-w-[44ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[44ch]">
           No property is chosen for any night yet. Each night below names its
           date and its town, and carries the Status that says how settled it is.
         </p>
@@ -97,13 +97,13 @@ export default function StaysPage() {
       <nav aria-label="Elsewhere" className="gap-sm flex flex-wrap">
         <Link
           href="/travel/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Flights and buses
         </Link>
         <Link
           href="/itinerary/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Full itinerary
         </Link>

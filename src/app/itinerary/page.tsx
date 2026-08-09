@@ -83,7 +83,7 @@ function Event({ event }: { event: ItineraryEvent }) {
           <span className="text-muted text-xs">{notes.join(" · ")}</span>
         ) : null}
         {event.note ? (
-          <span className="text-muted max-w-[52ch] text-xs leading-relaxed">
+          <span className="text-muted prose-body max-w-[52ch]">
             {sentence(event.note)}
           </span>
         ) : null}
@@ -131,7 +131,7 @@ function Day({ day, index }: { day: ItineraryDay; index: number }) {
           <Link
             href={stagePath(stage)}
             data-testid="itinerary-stage-link"
-            className="py-xs shrink-0 text-xs font-semibold whitespace-nowrap underline"
+            className="tap-target shrink-0 text-xs font-semibold whitespace-nowrap underline"
           >
             Stage {stage.number} →
           </Link>
@@ -142,7 +142,7 @@ function Day({ day, index }: { day: ItineraryDay; index: number }) {
         {formatLongWeekdayDate(day.weekday, day.date)}
       </h3>
 
-      <p className="max-w-[52ch] text-sm leading-relaxed">
+      <p className="prose-body max-w-[52ch]">
         {sentence(day.summary)}
       </p>
 
@@ -173,7 +173,7 @@ export default function ItineraryPage() {
         <h1 className="font-display text-3xl leading-tight">
           {formatLongDateSpan(summary.startDate, summary.endDate)}
         </h1>
-        <p className="text-muted max-w-[52ch] text-sm leading-relaxed">
+        <p className="text-muted prose-body max-w-[52ch]">
           Door to door from {placeName(summary.originCity)} and back again. Every
           fact below carries its Status, so a provisional detail reads as
           provisional.
@@ -189,13 +189,13 @@ export default function ItineraryPage() {
       <nav aria-label="Elsewhere" className="gap-sm flex flex-wrap">
         <Link
           href="/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Overview
         </Link>
         <Link
           href="/map/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Route map
         </Link>

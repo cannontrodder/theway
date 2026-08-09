@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
-const HEX_STAGE_COLOURS = ["#6B7F4E", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"];
+const HEX_STAGE_COLOURS = ["#5F7245", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"];
 
 const RGB_STAGE_COLOURS: [number, number, number][] = [
-  [107, 127, 78],
+  [95, 114, 69],
   [46, 91, 123],
   [154, 106, 23],
   [207, 142, 28],

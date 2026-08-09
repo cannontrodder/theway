@@ -43,7 +43,7 @@ export default function MapPage() {
         <h1 className="font-display text-3xl leading-tight">
           {placeName(summary.startsAt)} → {placeName(summary.finishesAt)}
         </h1>
-        <p className="text-muted max-w-[52ch] text-sm leading-relaxed">
+        <p className="text-muted prose-body max-w-[52ch]">
           The whole route on one map, {placeName(summary.route)} westwards. Tap a
           Stage&apos;s line or its end point to open that Stage.
         </p>
@@ -65,7 +65,7 @@ export default function MapPage() {
         <h2 className="font-display text-lg">
           The line is indicative, not navigable
         </h2>
-        <p className="max-w-[60ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[60ch]">
           Each day is drawn as straight dashes between the towns and villages it
           passes, so it shows the shape of the walk and nothing finer. It is not
           the signed Camino and it will not keep you on the path.
@@ -76,7 +76,7 @@ export default function MapPage() {
             <StatusChip status={gpxStillOwed.status} className="text-muted" />
           ) : null}
         </p>
-        <p className="max-w-[60ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[60ch]">
           {sentence(summary.navigationPolicy)}
         </p>
       </section>
@@ -86,7 +86,7 @@ export default function MapPage() {
           <Link
             key={stage.number}
             href={`#stage-${stage.number}`}
-            className="border-border rounded-medium px-md py-sm border text-sm"
+            className="border-border rounded-medium px-md tap-target border text-sm"
           >
             Stage {stage.number}
           </Link>

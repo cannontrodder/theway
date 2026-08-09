@@ -10,9 +10,9 @@ export function HomepageHero() {
   return (
     <section aria-label="The Way" className="bg-ink text-paper">
       <div className="mx-auto grid max-w-5xl sm:grid-cols-2 sm:items-stretch">
-        <ImageSlot className="h-28 w-full sm:order-2 sm:h-full sm:min-h-64" />
+        <ImageSlot className="h-16 w-full xs:h-28 sm:order-2 sm:h-full sm:min-h-64" />
 
-        <div className="px-md py-lg gap-sm flex flex-col items-start sm:order-1 sm:justify-center">
+        <div className="px-md py-md gap-sm flex flex-col items-start sm:py-lg sm:order-1 sm:justify-center">
           <h1 className="font-display text-4xl leading-none tracking-[0.04em] uppercase sm:text-6xl">
             The Way
           </h1>
@@ -22,7 +22,7 @@ export function HomepageHero() {
             Our Camino. Our Journey.
           </p>
 
-          <p className="max-w-[44ch] text-sm leading-snug sm:text-base">{sentence}</p>
+          <p className="prose-body max-w-[44ch]">{sentence}</p>
         </div>
       </div>
     </section>

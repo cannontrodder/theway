@@ -59,13 +59,13 @@ export function UpNext() {
       </ul>
 
       {stage.preWalkTransport ? (
-        <p data-testid="up-next-transport" className="text-sm font-semibold">
+        <p data-testid="up-next-transport" className="prose-body font-semibold">
           {sentence(stage.preWalkTransport)} first.
         </p>
       ) : null}
 
       {note ? (
-        <p data-testid="up-next-note" className="max-w-[44ch] text-sm leading-relaxed">
+        <p data-testid="up-next-note" className="prose-body max-w-[44ch]">
           {sentence(note)}
         </p>
       ) : null}
@@ -74,7 +74,7 @@ export function UpNext() {
         <Link
           href={stagePath(stage)}
           data-testid="up-next-link"
-          className="bg-olive text-white rounded-medium px-md py-sm mt-xs inline-flex min-h-11 items-center text-sm font-semibold no-underline"
+          className="bg-olive text-white rounded-medium px-md mt-xs tap-target text-sm font-semibold no-underline"
         >
           View Stage {stage.number} →
         </Link>

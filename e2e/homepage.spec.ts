@@ -70,7 +70,7 @@ test("the hero image slot is a flat colour block carrying the Route line, with n
   const background = await slot.evaluate(
     (node) => getComputedStyle(node).backgroundColor,
   );
-  expect(["rgb(107, 127, 78)", "rgb(242, 239, 230)"]).toContain(background);
+  expect(["rgb(95, 114, 69)", "rgb(242, 239, 230)"]).toContain(background);
 });
 
 test("the hero and the headline figures sit above the fold", async ({ page }) => {

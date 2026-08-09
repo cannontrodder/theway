@@ -91,7 +91,7 @@ function Leg({ leg }: { leg: TransportLeg }) {
       </ul>
 
       {leg.note ? (
-        <p className="max-w-[52ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[52ch]">
           {sentence(leg.note)}
         </p>
       ) : null}
@@ -104,7 +104,7 @@ function Leg({ leg }: { leg: TransportLeg }) {
           <StatusChip status={trip.summary.distancesAre} className="text-muted" />
           <Link
             href={stagePath(stage)}
-            className="shrink-0 font-semibold whitespace-nowrap underline"
+            className="tap-target shrink-0 font-semibold whitespace-nowrap underline"
           >
             Stage {stage.number} →
           </Link>
@@ -120,7 +120,7 @@ function Leg({ leg }: { leg: TransportLeg }) {
           <Link
             href={nightPath(night)}
             data-testid="travel-stays-link"
-            className="shrink-0 font-semibold whitespace-nowrap underline"
+            className="tap-target shrink-0 font-semibold whitespace-nowrap underline"
           >
             That night →
           </Link>
@@ -144,7 +144,7 @@ export default function TravelPage() {
         <h1 className="font-display text-3xl leading-tight">
           Flights and buses
         </h1>
-        <p className="max-w-[44ch] text-sm leading-relaxed">
+        <p className="prose-body max-w-[44ch]">
           Nothing here is booked yet, so every leg carries the Status that says
           how settled it is.
         </p>
@@ -162,13 +162,13 @@ export default function TravelPage() {
       <nav aria-label="Elsewhere" className="gap-sm flex flex-wrap">
         <Link
           href="/stays/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Where we sleep
         </Link>
         <Link
           href="/itinerary/"
-          className="border-border rounded-medium px-md py-sm border text-sm"
+          className="border-border rounded-medium px-md tap-target border text-sm"
         >
           Full itinerary
         </Link>

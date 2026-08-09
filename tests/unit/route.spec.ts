@@ -48,7 +48,7 @@ test("a place a Stage does not touch has no position", () => {
 
 test("each Stage gets its own colour, in walking order", () => {
   const colours = trip.stages.map((stage) => stageColour(stage.number));
-  expect(colours).toEqual(["#6B7F4E", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"]);
+  expect(colours).toEqual(["#5F7245", "#2E5B7B", "#9A6A17", "#CF8E1C", "#0F1D34"]);
   expect(new Set(colours).size).toBe(trip.stages.length);
 });
 

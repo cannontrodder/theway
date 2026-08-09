@@ -17,8 +17,12 @@ const navLinks = [
 export function SiteHeader({ dates }: { dates: string }) {
   return (
     <header className="border-border bg-white border-b">
-      <div className="px-md py-md gap-md mx-auto flex max-w-5xl items-center">
-        <Link href="/" aria-label="The Way" className="mr-auto">
+      <div className="px-md py-md gap-sm mx-auto flex max-w-5xl items-center sm:gap-md">
+        <Link
+          href="/"
+          aria-label="The Way"
+          className="tap-target mr-auto"
+        >
           <Wordmark />
         </Link>
 
@@ -60,7 +64,11 @@ export function SiteHeader({ dates }: { dates: string }) {
             className="border-border bg-white rounded-medium p-md gap-md right-0 top-full absolute z-10 flex w-48 flex-col border shadow-lg"
           >
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="py-sm">
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-sm tap-target"
+              >
                 {link.label}
               </Link>
             ))}

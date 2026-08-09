@@ -87,7 +87,7 @@ export function HeadlineFigures() {
         {figures.map((figure) => (
           <li
             key={figure.value}
-            className="px-md py-md gap-xs border-blue flex flex-col items-center border-b border-r text-center last:border-r-0 sm:border-b-0 [&:nth-child(2)]:border-r-0 sm:[&:nth-child(2)]:border-r"
+            className="px-md py-sm gap-xs border-blue flex flex-col items-center border-b border-r text-center last:border-r-0 sm:py-md sm:border-b-0 [&:nth-child(2)]:border-r-0 sm:[&:nth-child(2)]:border-r"
           >
             <span className="text-border">{figure.icon}</span>
             <span className="text-sm leading-tight font-semibold tracking-[0.08em]">

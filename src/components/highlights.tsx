@@ -91,7 +91,7 @@ export function Highlights() {
               <p
                 key={fact.prose}
                 data-testid="highlight-fact"
-                className="gap-sm flex max-w-[40ch] flex-wrap items-baseline text-sm leading-relaxed"
+                className="gap-sm prose-body flex max-w-[40ch] flex-wrap items-baseline"
               >
                 <span>{fact.prose}</span>
                 <StatusChip
@@ -105,7 +105,7 @@ export function Highlights() {
             <Link
               href={highlight.href}
               data-testid="highlight-link"
-              className="py-sm text-sm font-semibold underline"
+              className="tap-target text-sm font-semibold underline"
             >
               {highlight.linkLabel}
             </Link>
