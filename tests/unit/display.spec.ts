@@ -1,25 +1,31 @@
 import { expect, test } from "@playwright/test";
 
 import {
+  STAYS_PATH,
+  TRAVEL_PATH,
   formatApproxDistanceKm,
   formatApproxTimeSpan,
   formatDateSpan,
   formatDayAndMonth,
   formatDayAndMonthSpan,
+  formatLegRoute,
   formatLongWeekdayDate,
   formatRoute,
   formatDistanceKm,
   formatLongDateSpan,
   formatMonthAndYear,
+  formatStations,
   formatWeekdayDate,
   formatWeekdayDateSpan,
+  nightAnchorId,
+  nightPath,
   placeName,
   sentence,
   spellOutCount,
   stagePath,
   stageRoute,
 } from "../../src/lib/display";
-import { trip } from "../../src/lib/trip";
+import { overnightStay, trip } from "../../src/lib/trip";
 
 test("place names get their Spanish diacritics back for display", () => {
   expect(placeName("Logrono")).toBe("Logroño");
@@ -168,6 +174,88 @@ test("small counts spell out as words", () => {
 
 test("counts too large to spell out fall back to digits", () => {
   expect(spellOutCount(23)).toBe("23");
+});
+
+test("prose that calls a walking day Day N reads as Stage N, as the glossary requires", () => {
+  expect(
+    sentence(
+      "This transfer occurs before the longest proposed walking stage, so the exact timetable materially affects whether Day 1 is sensible.",
+    ),
+  ).toContain("whether Stage 1 is sensible");
+  expect(sentence("Dependent on retaining the current proposed Day 1 stage.")).toBe(
+    "Dependent on retaining the current proposed Stage 1.",
+  );
+  expect(sentence("Eight days, one of them a Sunday")).toBe(
+    "Eight days, one of them a Sunday",
+  );
+});
+
+test("no prose the site shows leaves a walking day called Day N", () => {
+  const prose = [
+    ...trip.transport.map((leg) => leg.note),
+    ...trip.accommodation.map((night) => night.notes),
+    ...trip.stages.flatMap((stage) => [
+      stage.mainRisk,
+      stage.terrainNote,
+      stage.planningReason,
+      stage.eveningPlan,
+      stage.preWalkTransport,
+    ]),
+    ...trip.itinerary.flatMap((day) => [
+      day.summary,
+      ...day.events.map((event) => event.note),
+    ]),
+  ].filter((text): text is string => Boolean(text));
+
+  for (const text of prose) {
+    expect(sentence(text)).not.toMatch(/\bDay \d\b/);
+  }
+});
+
+test("a transport leg's route names its connection when it has one", () => {
+  expect(formatLegRoute({ from: "Newcastle", to: "Bilbao", via: "Amsterdam" })).toBe(
+    "Newcastle → Amsterdam → Bilbao",
+  );
+  expect(formatLegRoute({ from: "Bilbao", to: "Logrono" })).toBe(
+    "Bilbao → Logroño",
+  );
+});
+
+test("a leg's stations read as a pair, or as the one the data holds", () => {
+  expect(
+    formatStations({
+      fromStation: "Bilbao Intermodal",
+      toStation: "Logrono Bus Station",
+    }),
+  ).toBe("Bilbao Intermodal → Logroño Bus Station");
+  expect(formatStations({ fromStation: "Bilbao Intermodal" })).toBe(
+    "Bilbao Intermodal",
+  );
+  expect(formatStations({})).toBeUndefined();
+});
+
+test("a night on the Stays page is addressable by its own date", () => {
+  expect(nightAnchorId({ date: "2026-10-09" })).toBe("night-2026-10-09");
+  expect(nightPath({ date: "2026-10-09" })).toBe("/stays/#night-2026-10-09");
+  expect(TRAVEL_PATH).toBe("/travel/");
+  expect(STAYS_PATH).toBe("/stays/");
+});
+
+test("every night in the trip data gets a distinct link on the Stays page", () => {
+  const paths = trip.accommodation.map(nightPath);
+  expect(new Set(paths).size).toBe(trip.accommodation.length);
+  expect(paths).toHaveLength(7);
+});
+
+test("a Stage's Overnight link points at that night, not merely at a matching date", () => {
+  for (const stage of trip.stages) {
+    const stay = overnightStay(stage)!;
+    expect(stay.location).toBe(stage.overnight);
+    expect(nightPath(stay)).toBe(`/stays/#night-${stay.date}`);
+  }
+  expect(nightPath(overnightStay(trip.stages[4])!)).toBe(
+    "/stays/#night-2026-10-09",
+  );
 });
 
 test("the formatters render the trip's own facts the way the homepage needs them", () => {

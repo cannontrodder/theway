@@ -464,8 +464,14 @@ export function findStage(stageNumber: number): Stage | undefined {
   return trip.stages.find((stage) => stage.number === stageNumber);
 }
 
+function isTheOvernightOf(night: Accommodation, stage: Stage): boolean {
+  return night.date === stage.date && night.location === stage.overnight;
+}
+
 export function overnightStay(stage: Stage): Accommodation | undefined {
-  return trip.accommodation.find(
-    (night) => night.date === stage.date && night.location === stage.overnight,
-  );
+  return trip.accommodation.find((night) => isTheOvernightOf(night, stage));
+}
+
+export function stageEndingAt(night: Accommodation): Stage | undefined {
+  return trip.stages.find((stage) => isTheOvernightOf(night, stage));
 }

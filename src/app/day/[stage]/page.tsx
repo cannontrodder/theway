@@ -8,6 +8,7 @@ import { StatusChip } from "@/components/status-chip";
 import {
   formatDistanceKm,
   formatWeekdayDate,
+  nightPath,
   placeName,
   sentence,
   stagePath,
@@ -217,6 +218,17 @@ export default async function StagePage({
         {stay?.notes ? (
           <p className="max-w-[60ch] text-sm leading-relaxed">
             {sentence(stay.notes)}
+          </p>
+        ) : null}
+        {stay ? (
+          <p>
+            <Link
+              href={nightPath(stay)}
+              data-testid="stays-link"
+              className="py-sm text-sm font-semibold underline"
+            >
+              This night on the Stays page →
+            </Link>
           </p>
         ) : null}
       </section>

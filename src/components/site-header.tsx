@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ITINERARY_PATH, stagePath } from "@/lib/display";
+import { ITINERARY_PATH, STAYS_PATH, TRAVEL_PATH, stagePath } from "@/lib/display";
 import { trip } from "@/lib/trip";
 
 import { Wordmark } from "./wordmark";
@@ -10,6 +10,8 @@ const navLinks = [
   { href: ITINERARY_PATH, label: "Itinerary" },
   { href: stagePath(trip.stages[0]), label: "Stages" },
   { href: "/map/", label: "Map" },
+  { href: TRAVEL_PATH, label: "Travel" },
+  { href: STAYS_PATH, label: "Stays" },
 ];
 
 export function SiteHeader({ dates }: { dates: string }) {
@@ -22,7 +24,7 @@ export function SiteHeader({ dates }: { dates: string }) {
 
         <p className="text-muted text-xs sm:text-sm">{dates}</p>
 
-        <nav aria-label="Main" className="gap-lg hidden items-center sm:flex">
+        <nav aria-label="Main" className="gap-md hidden items-center md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -34,7 +36,7 @@ export function SiteHeader({ dates }: { dates: string }) {
           ))}
         </nav>
 
-        <details className="relative sm:hidden">
+        <details className="relative md:hidden">
           <summary
             role="button"
             aria-label="Menu"
