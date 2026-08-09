@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 
 import {
   findStage,
+  nextStage,
   overnightStay,
   readTrip,
   stageEndingAt,
@@ -47,6 +48,7 @@ test("the trip is built from the trip-data.json that lives in the app", () => {
 test("the public interface exposes the summary, Stages, itinerary, accommodation, transport and open items", () => {
   expect(Object.keys(trip).sort()).toEqual([
     "accommodation",
+    "finalWeekend",
     "fixedFinish",
     "itinerary",
     "openItems",
@@ -147,12 +149,43 @@ test("the Burgos finish is FIXED even though the Stage that reaches it is PROPOS
     date: "2026-10-09",
     weekday: "Friday",
     status: "FIXED",
+    eveningPlan:
+      "Stay in Burgos and have a proper night out after completing the walk",
     eveningPlanStatus: "FIXED",
   });
   expect(trip.fixedFinish.weekday).toBe(trip.stages[4].weekday);
   expect(trip.stages[4].status).toBe("PROPOSED");
   expect(trip.stages[4].date).toBe(trip.fixedFinish.date);
   expect(trip.stages[4].finishesAt).toBe(trip.fixedFinish.location);
+});
+
+test("the final weekend runs from the Saturday night in Bilbao to the flight home", () => {
+  expect(trip.finalWeekend).toEqual({
+    location: "Bilbao",
+    startDate: "2026-10-10",
+    endDate: "2026-10-11",
+    status: "FIXED",
+  });
+  expect(
+    trip.finalWeekend.startDate > trip.fixedFinish.date,
+  ).toBe(true);
+  expect(trip.finalWeekend.endDate).toBe(trip.summary.endDate);
+});
+
+test("the next Stage is the first one by date, not whichever the data happens to list first", () => {
+  expect(nextStage()).toBe(trip.stages[0]);
+  expect(nextStage().date).toBe(
+    trip.stages.map((stage) => stage.date).sort()[0],
+  );
+
+  const shuffled = readTrip(
+    rawFileWith((clone) => {
+      const stages = (clone.walking_plan as unknown as { stages: unknown[] })
+        .stages;
+      stages.reverse();
+    }),
+  );
+  expect(shuffled.stages.map((stage) => stage.number)).toEqual([1, 2, 3, 4, 5]);
 });
 
 test("superseded records are absent from every output", () => {
