@@ -32,7 +32,7 @@ export interface JourneyWalk extends LegSpan {
 export type JourneyLeg = JourneyTransfer | JourneyWalk;
 export type JourneyStep = JourneyPlace | JourneyLeg;
 
-function toTransferMode(kind: string): "Flight" | "Bus" {
+export function transferMode(kind: string): "Flight" | "Bus" {
   if (kind === "Flight" || kind === "Bus") return kind;
   throw new Error(
     `The journey chain has no icon for a "${kind}" leg. Add one before the data uses it.`,
@@ -50,7 +50,7 @@ function hopsOf(leg: TransportLeg): [string, string][] {
 function toTransfers(leg: TransportLeg): JourneyTransfer[] {
   return hopsOf(leg).map(([from, to]) => ({
     step: "leg" as const,
-    mode: toTransferMode(leg.kind),
+    mode: transferMode(leg.kind),
     from,
     to,
     startDate: leg.date,

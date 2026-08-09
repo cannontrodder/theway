@@ -85,8 +85,14 @@ export function placeName(raw: string): string {
   );
 }
 
+function walkingDayReadsAsStage(prose: string): string {
+  return prose.replace(/\bDay (\d)( stage)?\b/g, "Stage $1");
+}
+
 export function sentence(raw: string): string {
-  return raw.replace(/[A-Za-z]+/g, (word) => ACCENTED_WORDS[word] ?? word);
+  return walkingDayReadsAsStage(
+    raw.replace(/[A-Za-z]+/g, (word) => ACCENTED_WORDS[word] ?? word),
+  );
 }
 
 function formatSpan(
@@ -146,6 +152,28 @@ export function formatDayAndMonthSpan(
   return `${formatDayAndMonth(startIsoDate)} ${EN_DASH} ${formatDayAndMonth(endIsoDate)}`;
 }
 
+export function formatLegRoute(leg: {
+  from: string;
+  to: string;
+  via?: string;
+}): string {
+  return [leg.from, leg.via, leg.to]
+    .filter((place): place is string => Boolean(place))
+    .map(placeName)
+    .join(" → ");
+}
+
+export function formatStations(leg: {
+  fromStation?: string;
+  toStation?: string;
+}): string | undefined {
+  if (!leg.fromStation && !leg.toStation) return undefined;
+  return [leg.fromStation, leg.toStation]
+    .filter((station): station is string => Boolean(station))
+    .map(placeName)
+    .join(" → ");
+}
+
 export function formatRoute(raw: string): string {
   return raw
     .split("->")
@@ -190,6 +218,16 @@ export function formatMonthAndYear(isoDate: string): string {
 }
 
 export const ITINERARY_PATH = "/itinerary/";
+export const TRAVEL_PATH = "/travel/";
+export const STAYS_PATH = "/stays/";
+
+export function nightAnchorId(night: { date: string }): string {
+  return `night-${night.date}`;
+}
+
+export function nightPath(night: { date: string }): string {
+  return `${STAYS_PATH}#${nightAnchorId(night)}`;
+}
 
 export function stagePath(stage: { number: number }): string {
   return `/day/${stage.number}/`;

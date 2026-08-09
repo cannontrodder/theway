@@ -1,7 +1,13 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
-import { findStage, overnightStay, readTrip, trip } from "../../src/lib/trip";
+import {
+  findStage,
+  overnightStay,
+  readTrip,
+  stageEndingAt,
+  trip,
+} from "../../src/lib/trip";
 
 const rawFile = JSON.parse(
   readFileSync("src/data/trip-data.json", "utf8"),
@@ -351,4 +357,113 @@ test("accommodation, transport and open items carry the facts pages need", () =>
     reason: undefined,
   });
   expect(trip.openItems.map((item) => item.status)).toContain("TO DO");
+});
+
+test("the seven nights come back in date order, one per night of the trip", () => {
+  const dates = trip.accommodation.map((night) => night.date);
+  expect(dates).toEqual([...dates].sort());
+  expect(dates).toEqual([
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-10",
+  ]);
+  expect(dates).toHaveLength(trip.summary.durationDays - 1);
+});
+
+test("no property is chosen for any night, and every night still carries a Status", () => {
+  for (const night of trip.accommodation) {
+    expect(night.property).toBeNull();
+    expect(night.status).toBeTruthy();
+  }
+  expect(trip.accommodation.map((night) => night.status)).toEqual([
+    "TO BOOK",
+    "PROPOSED",
+    "PROPOSED",
+    "PROPOSED",
+    "PROPOSED",
+    "TO BOOK",
+    "TO BOOK",
+  ]);
+});
+
+test("the Friday Burgos night keeps its end-of-Camino celebration note", () => {
+  const friday = trip.accommodation.find((night) => night.date === "2026-10-09")!;
+  expect(friday.location).toBe("Burgos");
+  expect(friday.notes).toContain("end-of-Camino celebration");
+  expect(friday.notes).toContain("going out in central Burgos");
+  expect(friday.status).toBe("TO BOOK");
+});
+
+test("both flights read as PLANNED and carry the recheck note for October 2026", () => {
+  const flights = trip.transport.filter((leg) => leg.kind === "Flight");
+  expect(flights).toHaveLength(2);
+  for (const flight of flights) {
+    expect(flight.status).toBe("PLANNED");
+    expect(flight.operator).toBe("KLM");
+    expect(flight.via).toBe("Amsterdam");
+    expect(flight.note).toContain("October 2026");
+    expect(flight.note).toMatch(/flight numbers/);
+  }
+  expect(flights[0].note).toContain(
+    "must be rechecked against the bookable October 2026 schedule",
+  );
+});
+
+test("both buses read as TO VERIFY with their likely operator, stations and duration", () => {
+  const buses = trip.transport.filter((leg) => leg.kind === "Bus");
+  expect(buses).toHaveLength(2);
+  for (const bus of buses) {
+    expect(bus.status).toBe("TO VERIFY");
+    expect(bus.operator).toBeTruthy();
+    expect(bus.fromStation).toBeTruthy();
+    expect(bus.toStation).toBeTruthy();
+    expect(bus.durationEstimate).toContain("approximately 1 hour 45 minutes");
+  }
+
+  expect(buses[0]).toMatchObject({
+    date: "2026-10-05",
+    weekday: "Monday",
+    from: "Bilbao",
+    to: "Logrono",
+  });
+  expect(buses[0].note).toContain("the exact timetable materially affects");
+
+  expect(buses[1]).toMatchObject({
+    date: "2026-10-10",
+    weekday: "Saturday",
+    from: "Burgos",
+    to: "Bilbao",
+    operator: "ALSA",
+  });
+});
+
+test("a night resolves to the Stage that ends there, and the two travel nights to no Stage", () => {
+  for (const stage of trip.stages) {
+    expect(stageEndingAt(overnightStay(stage)!)).toBe(stage);
+  }
+
+  const travelNights = trip.accommodation.filter(
+    (night) => night.location === "Bilbao",
+  );
+  expect(travelNights).toHaveLength(2);
+  for (const night of travelNights) {
+    expect(stageEndingAt(night)).toBeUndefined();
+  }
+
+  const walkingNights = trip.accommodation.filter((night) =>
+    Boolean(stageEndingAt(night)),
+  );
+  expect(walkingNights).toHaveLength(trip.summary.walkingDays);
+});
+
+test("nothing in the transport or accommodation data is booked, so nothing may read as a booking", () => {
+  const statuses = [
+    ...trip.transport.map((leg) => leg.status),
+    ...trip.accommodation.map((night) => night.status),
+  ];
+  expect(statuses).not.toContain("BOOKED");
 });
